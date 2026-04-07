@@ -1,0 +1,17 @@
+git clone https://github.com/KarypisLab/ParMETIS.git
+
+cd ParMETIS/
+
+mkdir -p build
+cd build
+
+cmake .. \
+  -DCMAKE_C_COMPILER=mpicc \
+  -DGKLIB_PATH=/mnt/c/Programs/C/VS_Code/local_libs/GKlib \
+  -DMETIS_PATH=/mnt/c/Programs/C/VS_Code/local_libs/METIS \
+  -DCMAKE_INSTALL_PREFIX=/mnt/c/Programs/C/VS_Code/local_libs/ParMETIS \
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+
+make -j4
+
+make install

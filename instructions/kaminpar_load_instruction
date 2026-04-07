@@ -1,0 +1,18 @@
+git clone https://github.com/KaHIP/KaMinPar.git
+
+cd KaMinPar
+
+mkdir build && cd build
+
+cmake .. \
+  -DCMAKE_INSTALL_PREFIX=/mnt/c/Programs/C/VS_Code/local_libs/KaMinPar \
+  -DKAMINPAR_BUILD_DISTRIBUTED=ON \
+  -DKAMINPAR_BUILD_APPS=ON \
+  -DCMAKE_BUILD_TYPE=Debug \
+  -DKAMINPAR_BUILD_WITH_KASSERT=ON \
+  -DKAMINPAR_BUILD_TESTS=ON \
+  -DKAMINPAR_BUILD_IO=ON \
+  -DKAMINPAR_BUILD_WITH_MTUNE_NATIVE=ON
+
+
+cmake --build . -- -j4
