@@ -9,63 +9,13 @@
 #include <unordered_set>
 
 #include <parmetis.h>
-// #include <parhip_interface.h>
-// #include <ptscotch.h>
+#include <parhip_interface.h>
+#include <ptscotch.h>
+#include <dkaminpar.h>
 
 /*
-mpicxx -O3 ver1.cpp -o ver1 \
--I/mnt/c/Programs/C/VS_Code/local_libs/ParMETIS/include \
--I/mnt/c/Programs/C/VS_Code/local_libs/METIS/include \
--I/mnt/c/Programs/C/VS_Code/local_libs/KaHIP/interface \
--I/mnt/c/Programs/C/VS_Code/local_libs/KaHIP/parallel/parallel_src/interface \
--I/mnt/c/Programs/C/VS_Code/local_libs/scotch/include \
--L/mnt/c/Programs/C/VS_Code/local_libs/ParMETIS/build/Linux-x86_64/libparmetis \
--L/mnt/c/Programs/C/VS_Code/local_libs/METIS/libmetis \
--L/mnt/c/Programs/C/VS_Code/local_libs/KaHIP/build \
--L/mnt/c/Programs/C/VS_Code/local_libs/KaHIP/build/parallel/parallel_src \
--L/mnt/c/Programs/C/VS_Code/local_libs/scotch/lib \
--Wl,-rpath,/mnt/c/Programs/C/VS_Code/local_libs/ParMETIS/build/Linux-x86_64/libparmetis \
--Wl,-rpath,/mnt/c/Programs/C/VS_Code/local_libs/KaHIP/build \
--Wl,-rpath,/mnt/c/Programs/C/VS_Code/local_libs/KaHIP/build/parallel/parallel_src \
--lparmetis -lmetis -lparhip_interface -lkahip -fopenmp -lptscotch -lscotch -lscotcherr -lm
-
-
-ParMETIS
-#include <parmetis.h>
-
-mpicxx -O3 ver1.cpp -o ver1 \
-  -I/mnt/c/Programs/C/VS_Code/local_libs/METIS/include \
-  -I/mnt/c/Programs/C/VS_Code/local_libs/ParMETIS/include \
-  -L/mnt/c/Programs/C/VS_Code/local_libs/ParMETIS/lib -lparmetis \
-  -L/mnt/c/Programs/C/VS_Code/local_libs/METIS/lib -lmetis 
-
-mpicxx -O3 ver1.cpp -o ver1 \
--I/mnt/c/Programs/C/VS_Code/local_libs/METIS/include \
--I/mnt/c/Programs/C/VS_Code/local_libs/ParMETIS/include \
--L/mnt/c/Programs/C/VS_Code/local_libs/METIS/libmetis \
--L/mnt/c/Programs/C/VS_Code/local_libs/ParMETIS/lib -lparmetis
-
-
-
-KaHIP
-#include <parhip_interface.h>
-
-mpicxx -O3 ver1.cpp -o ver1 \
-    -I/mnt/c/Programs/C/VS_Code/local_libs/KaHIP/parallel/parallel_src/interface \
-    -L/mnt/c/Programs/C/VS_Code/local_libs/KaHIP/build/parallel/parallel_src \
-    -Wl,-rpath,/mnt/c/Programs/C/VS_Code/local_libs/KaHIP/build/parallel/parallel_src \
-    -lparhip_interface
-
-scotch
-#include <ptscotch.h>
-
-mpicxx -O3 ver1.cpp -o ver1 \
-    -I/mnt/c/Programs/C/VS_Code/local_libs/scotch/include \
-    -L/mnt/c/Programs/C/VS_Code/local_libs/scotch/lib -lptscotch -lscotch -lscotcherr
-
-
-
-mpirun -np 4 ./ver1 CSR/test 4 Partitions
+./compile.sh
+mpirun -np 4 ./main CSR/test 4 Partitions
 */
 
 class CSR {
@@ -180,15 +130,6 @@ private:
         nrows = header[0];
         nnz = header[1];
         
-        // Читаем весь массив rows во временный буфер (только на процессе 0)
-        std::vector<int> all_rows;
-        MPI_Offset offset = 2 * sizeof(int);
-        
-        if (rank == 0) {
-            all_rows.resize(nrows + 1);
-            MPI_File_read_at(fh, offset, all_rows.data(), nrows + 1, MPI_INT, MPI_STATUS_IGNORE);
-        }
-        
         // Вычисляем распределение строк
         int base = nrows / size;
         int rem = nrows % size;
@@ -197,44 +138,16 @@ private:
         start_row = rank * base + std::min(rank, rem);
         end_row = start_row + local_rows;
 
-        vtxdist.resize(size + 1);
-        
-        // Задаем размеры rows каждому процессу
         rows.resize(local_rows + 1);
-        
-        if (rank == 0) {
-            // Процесс 0 отправляет каждому процессу его часть rows
-            for (int p = 0; p < size; p++) {
-                // Вычисляем start_row для процесса p
-                int p_start_row = p * base + std::min(p, rem);
-                int p_local_rows = base + (p < rem ? 1 : 0);
-                
-                if (p == 0) {
-                    // Для себя просто копируем
-                    std::copy(all_rows.begin() + p_start_row,
-                            all_rows.begin() + p_start_row + p_local_rows + 1,
-                            rows.begin());
-                } else {
-                    // Отправляем другим процессам
-                    MPI_Send(all_rows.data() + p_start_row,
-                            p_local_rows + 1,
+        MPI_Offset rows_offset = 2 * sizeof(int);
+        MPI_File_read_at_all(fh,
+                            rows_offset + start_row * sizeof(int),
+                            rows.data(),
+                            local_rows + 1,
                             MPI_INT,
-                            p,
-                            0,
-                            MPI_COMM_WORLD);
-                }
-            }
-        } else {
-            // Остальные процессы получают свои rows
-            MPI_Recv(rows.data(),
-                    local_rows + 1,
-                    MPI_INT,
-                    0,
-                    0,
-                    MPI_COMM_WORLD,
-                    MPI_STATUS_IGNORE);
-        }
+                            MPI_STATUS_IGNORE);
         
+
         // Убираем смещение
         int global_start_nnz = rows[0];   
         for (int i = 0; i <= local_rows; i++) {
@@ -245,8 +158,10 @@ private:
         // Чтение cols и vals
         cols.resize(local_nnz);
         vals.resize(local_nnz);
-        
-        MPI_Offset cols_offset = offset + sizeof(int) * (nrows + 1);
+
+        MPI_Offset offset = 2 * sizeof(int);
+
+        MPI_Offset cols_offset = 2 * sizeof(int) + sizeof(int) * (nrows + 1);
         MPI_Offset vals_offset = cols_offset + sizeof(int) * nnz;
         
         MPI_File_read_at_all(fh,
@@ -313,21 +228,22 @@ class Partition {
 public:
 
     enum class Type {
-        KAHIP,
-        KAMINPAR,
         PARMETIS,
         SCOTCH,
+        KAHIP,
+        KAMINPAR,
         ZOLTAN2
     };
 
     const int nparts;
     int actualParts;
+    const double imbalance;   
     std::vector<int> partition;
     int cutEdge;
     int ret;
     Type type;
 
-    Partition(const int nparts, const int local_rows) : nparts(nparts) {
+    Partition(const int nparts, const double imbalance, const int local_rows) : nparts(nparts), imbalance(imbalance) {
         partition.resize(local_rows);
     }
 
@@ -338,11 +254,11 @@ public:
         cutEdge = -1;
         switch(type) {
             case Type::PARMETIS: run_parmetis(csr); break;
-            //case Type::KAHIP:    run_parhip(csr);   break;
-            //case Type::SCOTCH:   run_ptscotch(csr);   break;
+            case Type::SCOTCH:   run_ptscotch(csr);   break;
+            case Type::KAHIP:    run_parhip(csr);   break;
+            case Type::KAMINPAR:   run_kaminpar(csr);   break;
         }
     }
-
 
     void run_parmetis(const CSR& csr) {    
         // ParMETIS параметры
@@ -350,7 +266,7 @@ public:
         int numflag = 0;  // 0 - C-нумерация (начиная с 0), 1 - Fortran-нумерация (начиная с 1)
         int ncon = 1;     // Количество ограничений (обычно 1)
         int nparts_idx = nparts;  // Количество частей для разбиения
-        float ubvec = 1.05;  // Целевой дисбаланс (5%)
+        float ubvec = 1 + imbalance;  // Целевой дисбаланс (5%)
         int options[3] = {1, 0, 0};  // Параметры: 1 - использовать параметры по умолчанию
         
         // // Конвертируем веса рёбер в формат ParMETIS (int)
@@ -395,44 +311,24 @@ public:
         );
         
         if (ret != METIS_OK) {
-            std::cerr << "Process " << csr.rank << ": ParMETIS returned error code " << ret << std::endl;
-        } else if (csr.rank == 0) {
+            std::string error_msg;
+            switch(ret) {
+                case METIS_ERROR_MEMORY:
+                    error_msg = "Out of memory";
+                    break;
+                case METIS_ERROR:
+                    error_msg = "General error";
+                    break;
+                default:
+                    error_msg = "Unknown error";
+            }
+            std::cerr << "Process " << csr.rank 
+                    << ": ParMETIS error: " << error_msg << std::endl;
+        }
+        else if (csr.rank == 0) {
             std::cout << "ParMETIS completed successfully!" << std::endl;
             std::cout << "Edge cut: " << cutEdge << std::endl;
         }
-    }
-
-/*
-    void run_parhip(const CSR& csr) {
-        std::vector<idxtype> vtxdist_id(csr.vtxdist.begin(), csr.vtxdist.end());
-        std::vector<idxtype> xadj(csr.rows.begin(), csr.rows.end());
-        std::vector<idxtype> adjncy(csr.cols.begin(), csr.cols.end());
-        std::vector<idxtype> partitionLong(csr.local_rows);
-
-        double imbalance = 0.03;
-        int seed = 42;
-        int mode = 2;
-        bool suppress_output = true;//печать доп инфы
-
-        MPI_Comm comm = MPI_COMM_WORLD;
-
-        if (csr.rank == 0) {
-            std::cout << "=== Starting ParHIP Partitioning ===" << std::endl;
-            std::cout << "Number of parts: " << actualParts << std::endl;
-            std::cout << "Total vertices: " << csr.vtxdist[csr.size] << std::endl;
-        }
-
-        ParHIPPartitionKWay(vtxdist_id.data(), xadj.data(), adjncy.data(),
-                                NULL, NULL, &actualParts, &imbalance,
-                                true, 0, FASTSOCIAL,
-                                &cutEdge, partitionLong.data(), &comm);
-
-        if (csr.rank == 0) {
-            std::cout << "ParHIP completed successfully!" << std::endl;
-            std::cout << "Edge cut: " << cutEdge << std::endl;
-        }
-
-        partition.assign(partitionLong.begin(), partitionLong.end());
     }
 
     void run_ptscotch(const CSR& csr) {
@@ -443,7 +339,7 @@ public:
             SCOTCH_STRATBALANCE, // стратегия: балансировка нагрузки
             nparts,             // число частей
             1,                  // менять индексы вершин
-            0.01                // imbalance: допустимое отклонение от идеального баланса
+            imbalance                // imbalance: допустимое отклонение от идеального баланса
         );
 
         SCOTCH_Dgraph grafdat;
@@ -549,7 +445,7 @@ public:
             SCOTCH_STRATBALANCE,
             nparts,
             1,
-            0.05
+            imbalance
         );
 
         if (csr.rank == 0)
@@ -582,7 +478,73 @@ public:
         SCOTCH_stratExit(&strat);
 
     }
-    */
+
+    void run_parhip(const CSR& csr) {
+        std::vector<idxtype> vtxdist_id(csr.vtxdist.begin(), csr.vtxdist.end());
+        std::vector<idxtype> xadj(csr.rows.begin(), csr.rows.end());
+        std::vector<idxtype> adjncy(csr.cols.begin(), csr.cols.end());
+        std::vector<idxtype> partitionLong(csr.local_rows);
+
+        double imbalance_parhip = imbalance;
+        int seed = 42;
+        int mode = 2;
+        bool suppress_output = true;//печать доп инфы
+
+        MPI_Comm comm = MPI_COMM_WORLD;
+
+        if (csr.rank == 0) {
+            std::cout << "=== Starting ParHIP Partitioning ===" << std::endl;
+            std::cout << "Number of parts: " << actualParts << std::endl;
+            std::cout << "Total vertices: " << csr.vtxdist[csr.size] << std::endl;
+        }
+
+        ParHIPPartitionKWay(vtxdist_id.data(), xadj.data(), adjncy.data(),
+                                NULL, NULL, &actualParts, &imbalance_parhip,
+                                true, 0, FASTSOCIAL,
+                                &cutEdge, partitionLong.data(), &comm);
+
+        if (csr.rank == 0) {
+            std::cout << "ParHIP completed successfully!" << std::endl;
+            std::cout << "Edge cut: " << cutEdge << std::endl;
+        }
+
+        partition.assign(partitionLong.begin(), partitionLong.end());
+    }
+
+    void run_kaminpar(const CSR& csr) {
+        std::vector<kaminpar::dist::GlobalNodeID> vtxdist(csr.vtxdist.begin(), csr.vtxdist.end());
+        std::vector<kaminpar::dist::GlobalEdgeID> xadj(csr.rows.begin(), csr.rows.end());
+        std::vector<kaminpar::dist::GlobalNodeID> adjncy(csr.cols.begin(), csr.cols.end());
+        std::vector<kaminpar::dist::BlockID> partitionLong(csr.local_rows);
+
+        kaminpar::dKaMinPar dist(MPI_COMM_WORLD, 1, kaminpar::dist::create_default_context());
+
+        dist.copy_graph(
+            vtxdist,
+            xadj,
+            adjncy
+        );
+
+        dist.set_k(nparts);
+        dist.set_uniform_max_block_weights(imbalance);
+        dist.set_output_level(kaminpar::OutputLevel::QUIET);
+
+        if (csr.rank == 0) {
+            std::cout << "=== Starting KaMinPar Partitioning ===" << std::endl;
+            std::cout << "Number of parts: " << nparts << std::endl;
+            std::cout << "Total vertices: " << csr.vtxdist[csr.size] << std::endl;
+        }
+
+        kaminpar::dist::EdgeWeight cut = dist.compute_partition(partitionLong);
+
+        if (csr.rank == 0) {
+            std::cout << "ParHIP completed successfully!" << std::endl;
+            std::cout << "Edge cut: " << cut << std::endl;
+        }
+
+        cutEdge = cut;
+        partition.assign(partitionLong.begin(), partitionLong.end());
+    }
 
     static std::string getPartitionName(Type partitionType) {
         switch (partitionType) {
@@ -622,7 +584,7 @@ public:
         ghost_part.clear(); 
 
         computeVertexImbalance(actualParts, partition.partition);
-        exchange_ghost_parts(csr, partition.partition);
+        exchange_ghost_parts(csr, partition.partition, actualParts);
         computeBoundaryVertices(actualParts, csr, partition.partition);
         countNeighboursSets(partition.partition, actualParts, csr);
         
@@ -682,9 +644,12 @@ private:
         }
     }
 
-    void exchange_ghost_parts(const CSR& csr, const std::vector<int>& partition) {
+    void exchange_ghost_parts(const CSR& csr, const std::vector<int>& partition, const int actualParts) {
         // 1. Собираем запросы
         std::vector<std::vector<int>> send_requests(csr.size);
+        for (int p = 0; p < csr.size; p++) {
+            send_requests[p].reserve(actualParts);
+        }
 
         for (int u = 0; u < partition.size(); u++) {
             for (int e = csr.rows[u]; e < csr.rows[u+1]; e++) {
@@ -932,9 +897,17 @@ private:
 };
 
 bool fileOpened(const std::string& filename) {
-    bool isFileOpened = true;
     std::ifstream file(filename);
-    return file.good();
+
+    if (!file.good()) {
+        return false;
+    }
+
+    if (std::filesystem::is_directory(filename)) {
+        return false;
+    }
+
+    return true;
 }
 
 bool directory_exists(const std::string& path) {
@@ -968,7 +941,7 @@ bool correctInitParams(int rank, const std::string filename , const int nparts, 
 }
 
 void start_partitions(const CSR& csr, PartitionMetrics& partitionMetrics, const int nparts) {
-    Partition partition(nparts, csr.local_rows);
+    Partition partition(nparts, 0.05, csr.local_rows);
 
     partition.run(Partition::Type::PARMETIS, csr);
     partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
@@ -976,14 +949,20 @@ void start_partitions(const CSR& csr, PartitionMetrics& partitionMetrics, const 
         std::cout << std::endl;
     }
 
-    // partition.run(Partition::Type::KAHIP, csr);
-    // partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
-    // if(csr.rank == 0) {
-    //     std::cout << std::endl;
-    // }
+    partition.run(Partition::Type::SCOTCH, csr);
+    partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
+    if (csr.rank == 0) {
+        std::cout << std::endl;
+    }
 
-    // partition.run(Partition::Type::SCOTCH, csr);
-    // partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
+    partition.run(Partition::Type::KAHIP, csr);
+    partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
+    if(csr.rank == 0) {
+        std::cout << std::endl;
+    }
+
+    partition.run(Partition::Type::KAMINPAR, csr);
+    partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
 }
 
 int main(int argc, char* argv[]) {

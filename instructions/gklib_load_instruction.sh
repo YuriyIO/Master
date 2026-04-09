@@ -4,4 +4,4 @@ cd GKlib/
 
 make config prefix=/mnt/c/Programs/C/VS_Code/local_libs/GKlib
 
-make install prefix=/mnt/c/Programs/C/VS_Code/local_libs/GKlib
+make install 
