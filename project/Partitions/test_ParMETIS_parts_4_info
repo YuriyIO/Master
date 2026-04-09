@@ -1,0 +1,19 @@
+Parts: 4
+Actual parts: 4
+Edge cut: 23
+
+Part 0: vertices=123, imbalance=-0.404858%
+Part 1: vertices=123, imbalance=-0.404858%
+Part 2: vertices=124, imbalance=0.404858%
+Part 3: vertices=124, imbalance=0.404858%
+
+Part 0: boundary vertices=16
+Part 1: boundary vertices=9
+Part 2: boundary vertices=8
+Part 3: boundary vertices=8
+
+Part 0: neighbours=3
+Part 1: neighbours=3
+Part 2: neighbours=3
+Part 3: neighbours=3
+
