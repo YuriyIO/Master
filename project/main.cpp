@@ -5,13 +5,21 @@
 #include <algorithm>
 #include <string>
 #include <filesystem>
-#include <unordered_map>
-#include <unordered_set>
+#include <iomanip>
 
 #include <parmetis.h>
 #include <parhip_interface.h>
 #include <ptscotch.h>
 #include <dkaminpar.h>
+
+#include <Teuchos_DefaultMpiComm.hpp>
+#include <Teuchos_ParameterList.hpp>
+#include <Tpetra_CrsGraph.hpp>
+#include <Tpetra_Core.hpp>
+#include <Zoltan2_XpetraCrsGraphAdapter.hpp>
+#include <Zoltan2_SphynxProblem.hpp>
+
+#include <zoltan.h>
 
 /*
 ./compile.sh
@@ -34,9 +42,15 @@ public:
     
     std::vector<int> vtxdist;
 
+    // Стандартные (без диагонали)
     std::vector<int> rows;
     std::vector<int> cols;
     std::vector<double> vals;
+
+    // С диагональю (для Sphynx)
+    std::vector<int> rows_diag;
+    std::vector<int> cols_diag;
+    std::vector<double> vals_diag;
 
     CSR(const int rank, const int size, const std::string& filename) 
         : rank(rank), size(size), filename(filename) 
@@ -44,6 +58,7 @@ public:
 
     void readGraph() {
         readCSR();
+        addDiagElems();
         deleteDiagElems();
         computeVtxDist();
     }
@@ -108,6 +123,58 @@ public:
                     std::cout << vtxdist[i] << " ";
                 }
                 std::cout << std::endl;
+                fflush(stdout);
+            }
+            MPI_Barrier(MPI_COMM_WORLD);
+        }
+    }
+
+    void printCSR_diag() {
+        // Вывод всей структуры CSR_diag для проверки
+        for (int u = 0; u < size; u++) {
+            if (u == rank) {
+                std::cout << "--- [DIAG VERSION] Rank " << rank << " rows [" << start_row 
+                        << ", " << end_row << ") ---\n";
+                
+                for (int i = 0; i < local_rows; i++) {
+                    int global_row = start_row + i;
+                    int start = rows_diag[i];     // Используем rows_diag
+                    int end = rows_diag[i + 1];   // Используем rows_diag
+                    
+                    std::cout << "Row " << global_row << ": ";
+                    for (int j = start; j < end; j++) {
+                        std::cout << "(" << cols_diag[j] << ", "  // Используем cols_diag
+                                << vals_diag[j] << ") ";        // Используем vals_diag
+                    }
+                    std::cout << "\n";
+                }
+                fflush(stdout);
+            }
+            MPI_Barrier(MPI_COMM_WORLD);
+        }
+    }
+
+    void printDiagElems_diag() {
+        // Вывод ТОЛЬКО диагональных элементов из структуры CSR_diag
+        for (int u = 0; u < size; u++) {
+            if (u == rank) {
+                std::cout << "--- [ONLY DIAGONALS] Rank " << rank << " rows [" << start_row 
+                        << ", " << end_row << ") ---\n";
+                
+                for (int i = 0; i < local_rows; i++) {
+                    int global_row = start_row + i;
+                    int start = rows_diag[i];
+                    int end = rows_diag[i + 1];
+                    
+                    std::cout << "Row " << global_row << ": ";
+                    for (int j = start; j < end; j++) {
+                        // Если индекс столбца совпадает с глобальным индексом строки
+                        if (global_row == cols_diag[j]) {
+                            std::cout << "(" << cols_diag[j] << ", " << vals_diag[j] << ") ";
+                        }
+                    }
+                    std::cout << "\n";
+                }
                 fflush(stdout);
             }
             MPI_Barrier(MPI_COMM_WORLD);
@@ -208,6 +275,48 @@ private:
         rows = std::move(new_rows);
     }
 
+    void addDiagElems() {
+        rows_diag.assign(local_rows + 1, 0);
+        cols_diag.clear();
+        vals_diag.clear();
+        cols_diag.reserve(cols.size() + local_rows);
+        vals_diag.reserve(vals.size() + local_rows);
+
+        for (int i = 0; i < local_rows; i++) {
+            int global_row = start_row + i;
+            int start = rows[i];
+            int end = rows[i + 1];
+
+            // 1. Ищем, где должна была быть диагональ (точка разрыва)
+            int split = start;
+            while (split < end && cols[split] < global_row) {
+                split++;
+            }
+
+            // 2. Проверяем, есть ли она там уже
+            if (split < end && cols[split] == global_row) {
+                // ДИАГОНАЛЬ ЕСТЬ: Просто копируем всю строку целиком за один раз
+                cols_diag.insert(cols_diag.end(), cols.begin() + start, cols.begin() + end);
+                vals_diag.insert(vals_diag.end(), vals.begin() + start, vals.begin() + end);
+            } else {
+                // ДИАГОНАЛИ НЕТ: Копируем блоки "до" и "после", вставляя 1.0 между ними
+                
+                // Копируем всё ДО диагонали
+                cols_diag.insert(cols_diag.end(), cols.begin() + start, cols.begin() + split);
+                vals_diag.insert(vals_diag.end(), vals.begin() + start, vals.begin() + split);
+                
+                // Вставляем саму диагональ
+                cols_diag.push_back(global_row);
+                vals_diag.push_back(1.0);
+                
+                // Копируем всё ПОСЛЕ диагонали
+                cols_diag.insert(cols_diag.end(), cols.begin() + split, cols.begin() + end);
+                vals_diag.insert(vals_diag.end(), vals.begin() + split, vals.begin() + end);
+            }
+            rows_diag[i + 1] = static_cast<int>(cols_diag.size());
+        }
+    }
+
     void computeVtxDist() {
         std::vector<int> all_local_rows(size);
         MPI_Allgather(&local_rows, 1, MPI_INT,
@@ -232,318 +341,208 @@ public:
         SCOTCH,
         KAHIP,
         KAMINPAR,
-        ZOLTAN2
+        ZOLTAN2_SPHYNX,
+        ZOLTAN_PHG
     };
 
     const int nparts;
     int actualParts;
     const double imbalance;   
+    double actualImbalance;   
     std::vector<int> partition;
     int cutEdge;
     int ret;
     Type type;
 
+    int seed;
+    bool suppress_output = true;
+    std::string ptscotch_strat_name;
+    std::string kahip_strat_name;
+    std::string kaminpar_strat_name;
+    std::string sphynx_problem_type;
+    std::string sphynx_preconditioner_type;
+    int sphynx_tolerance_pow;
+
+    std::string postfix;
+
+    double time_total;
+    double time_solve;
+
     Partition(const int nparts, const double imbalance, const int local_rows) : nparts(nparts), imbalance(imbalance) {
         partition.resize(local_rows);
+        seed = 42; 
     }
 
     void run(Type type, const CSR& csr) {
         actualParts = nparts;
+        actualImbalance = imbalance;
         ret = 0;
         this->type = type; 
         cutEdge = -1;
-        switch(type) {
-            case Type::PARMETIS: run_parmetis(csr); break;
-            case Type::SCOTCH:   run_ptscotch(csr);   break;
-            case Type::KAHIP:    run_parhip(csr);   break;
-            case Type::KAMINPAR:   run_kaminpar(csr);   break;
+        postfix = getPartitionPostfix(type);
+
+        if (csr.rank == 0) {
+            std::cout << "=== Starting " << getPartitionName(type) << " Partitioning ===" << std::endl;
+            std::cout << getPartitionStats(type) << std::endl;
         }
+
+        double loc_total_start, loc_total_end;
+        double loc_solve_duration = 0;
+
+        MPI_Barrier(MPI_COMM_WORLD);
+        loc_total_start = MPI_Wtime();
+
+        switch(type) {
+            case Type::PARMETIS:        run_parmetis(csr, loc_solve_duration);      break;
+            case Type::SCOTCH:          run_ptscotch(csr, loc_solve_duration);      break;
+            case Type::KAHIP:           run_kahip(csr, loc_solve_duration);        break;
+            case Type::KAMINPAR:        run_kaminpar(csr, loc_solve_duration);      break;
+            case Type::ZOLTAN2_SPHYNX:  run_zoltan2_sphynx(csr, loc_solve_duration); break;
+        }
+
+        loc_total_end = MPI_Wtime();
+        double loc_total_duration = loc_total_end - loc_total_start;
+
+        if(type == Type::PARMETIS && ret != METIS_OK) {
+            std::string error_msg = (ret == METIS_ERROR_MEMORY) ? "Out of memory" : 
+                        (ret == METIS_ERROR) ? "General error" : "Unknown error";
+            std::cerr << "ParMETIS error: " << error_msg << "; rank: " << csr.rank << std::endl;
+        }
+        else if(type == Type::SCOTCH && ret != 0)
+            std::cerr << "SCOTCH returned error code " << ret << "; rank: " << csr.rank << std::endl;
+        else if(csr.rank == 0)
+            std::cout << getPartitionName(type) << " completed successfully!" << std::endl;
+        
+        MPI_Reduce(&loc_total_duration, &this->time_total, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+        MPI_Reduce(&loc_solve_duration, &this->time_solve, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
     }
 
-    void run_parmetis(const CSR& csr) {    
-        // ParMETIS параметры
-        int wgtflag = 0;  // 0 - нет весов, 1 - веса вершин, 2 - веса рёбер, 3 - оба
-        int numflag = 0;  // 0 - C-нумерация (начиная с 0), 1 - Fortran-нумерация (начиная с 1)
-        int ncon = 1;     // Количество ограничений (обычно 1)
-        int nparts_idx = nparts;  // Количество частей для разбиения
-        float ubvec = 1 + imbalance;  // Целевой дисбаланс (5%)
-        int options[3] = {1, 0, 0};  // Параметры: 1 - использовать параметры по умолчанию
-        
-        // // Конвертируем веса рёбер в формат ParMETIS (int)
-        // vector<int> adjwgt_idx(adjwgt.size());
-        // if (wgtflag == 2 || wgtflag == 3) {
-        //     for (size_t i = 0; i < adjwgt.size(); i++) {
-        //         // ParMETIS ожидает целые веса, поэтому округляем или масштабируем
-        //         adjwgt_idx[i] = static_cast<int>(adjwgt[i] * 1000);  // Масштабируем для точности
-        //     }
-        // }
-        
-        // Целевые веса для каждой части (равномерное распределение)
+    void run_parmetis(const CSR& csr, double& loc_solve_time) {  
+        int wgtflag = 0, numflag = 0, ncon = 1, nparts_idx = nparts;
+        float ubvec = 1 + imbalance;
+        int options[3] = {1, 0, seed};
         std::vector<float> tpwgts(nparts, 1.0 / nparts);
-        
-        if (csr.rank == 0) {
-            std::cout << "=== Starting ParMETIS Partitioning ===" << std::endl;
-            std::cout << "Number of parts: " << nparts << std::endl;
-            std::cout << "Total vertices: " << csr.vtxdist[csr.size] << std::endl;
-            std::cout << "Weight flag: " << wgtflag << std::endl;
-        }
-        
-        // Вызов ParMETIS для разбиения графа на nparts частей
         MPI_Comm comm = MPI_COMM_WORLD;
 
+        double t1 = MPI_Wtime();
         ret = ParMETIS_V3_PartKway(
-            const_cast<int*>(reinterpret_cast<const int*>(csr.vtxdist.data())),
-            const_cast<int*>(reinterpret_cast<const int*>(csr.rows.data())),
-            const_cast<int*>(reinterpret_cast<const int*>(csr.cols.data())),
-            nullptr,  // vwgt (веса вершин) - не используем
-            // (wgtflag == 2 || wgtflag == 3) ? adjwgt_idx.data() : nullptr,  // adjwgt
-            nullptr,
-            &wgtflag,
-            &numflag,
-            &ncon,
-            &nparts_idx,
-            tpwgts.data(), 
-            &ubvec,
-            options,
-            &cutEdge,
-            reinterpret_cast<int*>(partition.data()),
-            &comm
+            const_cast<int*>(csr.vtxdist.data()), const_cast<int*>(csr.rows.data()),
+            const_cast<int*>(csr.cols.data()), nullptr, nullptr, &wgtflag, &numflag,
+            &ncon, &nparts_idx, tpwgts.data(), &ubvec, options, &cutEdge,
+            reinterpret_cast<int*>(partition.data()), &comm
         );
-        
-        if (ret != METIS_OK) {
-            std::string error_msg;
-            switch(ret) {
-                case METIS_ERROR_MEMORY:
-                    error_msg = "Out of memory";
-                    break;
-                case METIS_ERROR:
-                    error_msg = "General error";
-                    break;
-                default:
-                    error_msg = "Unknown error";
-            }
-            std::cerr << "Process " << csr.rank 
-                    << ": ParMETIS error: " << error_msg << std::endl;
-        }
-        else if (csr.rank == 0) {
-            std::cout << "ParMETIS completed successfully!" << std::endl;
-            std::cout << "Edge cut: " << cutEdge << std::endl;
-        }
+        loc_solve_time = MPI_Wtime() - t1;
     }
 
-    void run_ptscotch(const CSR& csr) {
+    void run_ptscotch(const CSR& csr, double& loc_solve_time) {
         SCOTCH_Strat strat;
         SCOTCH_stratInit(&strat);
-        SCOTCH_stratDgraphMapBuild(
-            &strat,             // указатель на структуру стратегии
-            SCOTCH_STRATBALANCE, // стратегия: балансировка нагрузки
-            nparts,             // число частей
-            1,                  // менять индексы вершин
-            imbalance                // imbalance: допустимое отклонение от идеального баланса
-        );
+        int strat_flag = (ptscotch_strat_name == "SCOTCH_STRATSPEED") ? SCOTCH_STRATSPEED : 
+                         (ptscotch_strat_name == "SCOTCH_STRATBALANCE") ? SCOTCH_STRATBALANCE : SCOTCH_STRATQUALITY;
 
+        SCOTCH_stratDgraphMapBuild(&strat, strat_flag, nparts, 1, imbalance);
         SCOTCH_Dgraph grafdat;
         SCOTCH_dgraphInit(&grafdat, MPI_COMM_WORLD);
-        SCOTCH_Num baseval = 0;
-        SCOTCH_Num vertlocnbr = csr.local_rows;
-        SCOTCH_Num edgelocnbr = csr.cols.size();
+        SCOTCH_dgraphBuild(&grafdat, 0, csr.local_rows, csr.local_rows, (SCOTCH_Num*)csr.rows.data(),
+                           NULL, NULL, NULL, csr.cols.size(), csr.cols.size(), 
+                           (SCOTCH_Num*)csr.cols.data(), NULL, NULL);
 
-        SCOTCH_dgraphBuild(
-            &grafdat,
-            0,                          // baseval
-            vertlocnbr,                    // vertlocnbr
-            vertlocnbr,                    // vertlocmax
-            (SCOTCH_Num*)csr.rows.data(),               // vertloctab
-            NULL,                       // vendloctab
-            NULL,                       // veloloctab
-            NULL,                       // vlblloctab
-            edgelocnbr,                // edgelocnbr
-            edgelocnbr,                // edgelocmax
-            (SCOTCH_Num*)csr.cols.data(),              // edgeloctab
-            NULL,                       // edgegsttab
-            NULL                        // edloloctab
-        );
+        double t1 = MPI_Wtime();
+        ret = SCOTCH_dgraphPart(&grafdat, nparts, &strat, partition.data());    
+        loc_solve_time = MPI_Wtime() - t1;
 
-        if(SCOTCH_dgraphCheck(&grafdat) != 0)
-        {
-            if(csr.rank==0)
-                std::cout<<"Graph invalid"<<std::endl;
-        }
-
-        if (csr.rank == 0) {
-            std::cout << "=== Starting SCOTCH Partitioning ===" << std::endl;
-            std::cout << "Number of parts: " << nparts << std::endl;
-            std::cout << "Total vertices: " << csr.vtxdist[csr.size] << std::endl;
-        }
-
-        ret = SCOTCH_dgraphPart(
-            &grafdat,
-            nparts,
-            &strat,
-            partition.data()
-        );
-
-        if (ret != 0) {
-            std::cerr << "Process " << csr.rank << ": SCOTCH returned error code " << ret << std::endl;
-        } else if (csr.rank == 0) {
-            std::cout << "SCOTCH completed successfully!" << std::endl;
-        }
-        
         SCOTCH_dgraphExit(&grafdat);
         SCOTCH_stratExit(&strat);
     }
 
-    void run_ptscotch_map(const CSR& csr) {
-        MPI_Comm comm = MPI_COMM_WORLD;
-
-        std::vector<SCOTCH_Num> xadj(csr.rows.begin(), csr.rows.end());
-        std::vector<SCOTCH_Num> adjncy(csr.cols.begin(), csr.cols.end());
-
-        SCOTCH_Num vertlocnbr = csr.local_rows;
-        SCOTCH_Num edgelocnbr = adjncy.size();
-
-        SCOTCH_Dgraph grafdat;
-        SCOTCH_dgraphInit(&grafdat, comm);
-
-        SCOTCH_dgraphBuild(
-            &grafdat,
-            0,
-            vertlocnbr,
-            vertlocnbr,
-            xadj.data(),
-            NULL,
-            NULL,
-            NULL,
-            edgelocnbr,
-            edgelocnbr,
-            adjncy.data(),
-            NULL,
-            NULL
-        );
-
-        if (SCOTCH_dgraphCheck(&grafdat) != 0) {
-            if (csr.rank == 0)
-                std::cout << "Graph invalid" << std::endl;
-        }
-
-        if (csr.rank == 0)
-            std::cout << "SCOTCH_archInit" << std::endl;
-
-        // --- architecture ---
-        SCOTCH_Arch arch;
-        SCOTCH_archInit(&arch);
-        SCOTCH_archCmplt(&arch, nparts);
-
-        if (csr.rank == 0)
-            std::cout << "SCOTCH_stratInit" << std::endl;
-
-        // --- strategy ---
-        SCOTCH_Strat strat;
-        SCOTCH_stratInit(&strat);
-        SCOTCH_stratDgraphMapBuild(
-            &strat,
-            SCOTCH_STRATBALANCE,
-            nparts,
-            1,
-            imbalance
-        );
-
-        if (csr.rank == 0)
-            std::cout << "SCOTCH completed " << std::endl;
-
-        // --- partition ---
-        std::vector<SCOTCH_Num> part_scotch(csr.local_rows);
-
-        int ret = SCOTCH_dgraphMap(
-            &grafdat,
-            &arch,
-            &strat,
-            part_scotch.data()
-        );
-
-        // --- convert to int ---
-        for (int i = 0; i < csr.local_rows; i++)
-            partition[i] = (int)part_scotch[i];
-
-        if (ret != 0) {
-            std::cerr << "Process " << csr.rank
-                    << ": SCOTCH returned error code " << ret << std::endl;
-        } else if (csr.rank == 0) {
-            std::cout << "SCOTCH completed successfully!" << std::endl;
-        }
-
-        // --- cleanup ---
-        SCOTCH_archExit(&arch);
-        SCOTCH_dgraphExit(&grafdat);
-        SCOTCH_stratExit(&strat);
-
-    }
-
-    void run_parhip(const CSR& csr) {
+    void run_kahip(const CSR& csr, double& loc_solve_time) {
         std::vector<idxtype> vtxdist_id(csr.vtxdist.begin(), csr.vtxdist.end());
         std::vector<idxtype> xadj(csr.rows.begin(), csr.rows.end());
         std::vector<idxtype> adjncy(csr.cols.begin(), csr.cols.end());
         std::vector<idxtype> partitionLong(csr.local_rows);
-
-        double imbalance_parhip = imbalance;
-        int seed = 42;
-        int mode = 2;
-        bool suppress_output = true;//печать доп инфы
-
         MPI_Comm comm = MPI_COMM_WORLD;
+        int strat = (kahip_strat_name == "ULTRAFASTMESH") ? 0 : 
+                    (kahip_strat_name == "FASTMESH") ? 1 : 2;
 
-        if (csr.rank == 0) {
-            std::cout << "=== Starting ParHIP Partitioning ===" << std::endl;
-            std::cout << "Number of parts: " << actualParts << std::endl;
-            std::cout << "Total vertices: " << csr.vtxdist[csr.size] << std::endl;
-        }
-
+        double t1 = MPI_Wtime();
         ParHIPPartitionKWay(vtxdist_id.data(), xadj.data(), adjncy.data(),
-                                NULL, NULL, &actualParts, &imbalance_parhip,
-                                true, 0, FASTSOCIAL,
+                                NULL, NULL, &actualParts, &actualImbalance,
+                                suppress_output, seed, strat,
                                 &cutEdge, partitionLong.data(), &comm);
-
-        if (csr.rank == 0) {
-            std::cout << "ParHIP completed successfully!" << std::endl;
-            std::cout << "Edge cut: " << cutEdge << std::endl;
-        }
-
+        loc_solve_time = MPI_Wtime() - t1;
         partition.assign(partitionLong.begin(), partitionLong.end());
     }
 
-    void run_kaminpar(const CSR& csr) {
-        std::vector<kaminpar::dist::GlobalNodeID> vtxdist(csr.vtxdist.begin(), csr.vtxdist.end());
-        std::vector<kaminpar::dist::GlobalEdgeID> xadj(csr.rows.begin(), csr.rows.end());
-        std::vector<kaminpar::dist::GlobalNodeID> adjncy(csr.cols.begin(), csr.cols.end());
-        std::vector<kaminpar::dist::BlockID> partitionLong(csr.local_rows);
+    void run_kaminpar(const CSR& csr, double& loc_solve_time) {
+        std::vector<kaminpar::dist::GlobalNodeID> vd(csr.vtxdist.begin(), csr.vtxdist.end());
+        std::vector<kaminpar::dist::GlobalEdgeID> xa(csr.rows.begin(), csr.rows.end());
+        std::vector<kaminpar::dist::GlobalNodeID> ad(csr.cols.begin(), csr.cols.end());
+        std::vector<kaminpar::dist::BlockID> pL(csr.local_rows);
 
-        kaminpar::dKaMinPar dist(MPI_COMM_WORLD, 1, kaminpar::dist::create_default_context());
+        kaminpar::dist::Context context = (kaminpar_strat_name == "create_default_context") ? 
+                                           kaminpar::dist::create_default_context() :
+                                          (kaminpar_strat_name == "create_strong_context") ? 
+                                           kaminpar::dist::create_strong_context() : 
+                                           kaminpar::dist::create_xterapart_context();
 
-        dist.copy_graph(
-            vtxdist,
-            xadj,
-            adjncy
-        );
-
+        kaminpar::dKaMinPar dist(MPI_COMM_WORLD, 1, context);
+        dist.copy_graph(vd, xa, ad);
         dist.set_k(nparts);
         dist.set_uniform_max_block_weights(imbalance);
-        dist.set_output_level(kaminpar::OutputLevel::QUIET);
+        if(suppress_output) dist.set_output_level(kaminpar::OutputLevel::QUIET);
 
-        if (csr.rank == 0) {
-            std::cout << "=== Starting KaMinPar Partitioning ===" << std::endl;
-            std::cout << "Number of parts: " << nparts << std::endl;
-            std::cout << "Total vertices: " << csr.vtxdist[csr.size] << std::endl;
+        double t1 = MPI_Wtime();
+        cutEdge = dist.compute_partition(pL);
+        loc_solve_time = MPI_Wtime() - t1;
+
+        partition.assign(pL.begin(), pL.end());
+    }
+
+    void run_zoltan2_sphynx(const CSR& csr, double& loc_solve_time) {
+        typedef Tpetra::CrsGraph<> graph_t;
+        typedef typename graph_t::local_ordinal_type LO;
+        typedef typename graph_t::global_ordinal_type GO;
+        typedef typename graph_t::node_type Node;
+        typedef Tpetra::Map<LO, GO, Node> map_t;
+        typedef Zoltan2::XpetraCrsGraphAdapter<graph_t> adapter_t;
+
+        auto tcomm = Tpetra::getDefaultComm();
+        GO g_el = csr.vtxdist[csr.size];
+        auto map = Teuchos::rcp(new map_t(g_el, csr.local_rows, 0, tcomm));
+
+        Teuchos::Array<size_t> nE(csr.local_rows);
+        for (int i = 0; i < csr.local_rows; ++i) nE[i] = csr.rows_diag[i+1] - csr.rows_diag[i];
+
+        auto graph = Teuchos::rcp(new graph_t(map, nE));
+        std::vector<GO> buf; 
+        for (int i = 0; i < csr.local_rows; ++i) {
+            GO g_row = csr.start_row + i;
+            size_t r_start = csr.rows_diag[i], r_len = nE[i];
+            buf.resize(r_len);
+            for (size_t j = 0; j < r_len; ++j) buf[j] = static_cast<GO>(csr.cols_diag[r_start + j]);
+            graph->insertGlobalIndices(g_row, Teuchos::ArrayView<const GO>(buf.data(), r_len));
         }
+        graph->fillComplete();
 
-        kaminpar::dist::EdgeWeight cut = dist.compute_partition(partitionLong);
+        adapter_t adapter(graph, 0);
+        Teuchos::ParameterList params;
+        params.set("num_global_parts", nparts);
 
-        if (csr.rank == 0) {
-            std::cout << "ParHIP completed successfully!" << std::endl;
-            std::cout << "Edge cut: " << cut << std::endl;
-        }
+        Teuchos::RCP<Teuchos::ParameterList> sP = Teuchos::rcp(new Teuchos::ParameterList());
+        sP->set("sphynx_skip_preprocessing", true);
+        sP->set("sphynx_problem_type", sphynx_problem_type);
+        sP->set("sphynx_preconditioner_type", sphynx_preconditioner_type);
+        sP->set("sphynx_tolerance", 1.0 / std::pow(10.0, sphynx_tolerance_pow));
 
-        cutEdge = cut;
-        partition.assign(partitionLong.begin(), partitionLong.end());
+        Zoltan2::SphynxProblem<adapter_t> problem(&adapter, &params, sP);
+
+        double t1 = MPI_Wtime();
+        problem.solve();
+        loc_solve_time = MPI_Wtime() - t1;
+
+        auto sol = problem.getSolution();
+        const int* pLV = sol.getPartListView();
+        for (size_t i = 0; i < (size_t)csr.local_rows; ++i) partition[i] = (int)(pLV[i]);
     }
 
     static std::string getPartitionName(Type partitionType) {
@@ -552,51 +551,108 @@ public:
             case Type::KAMINPAR:   return "KaMinPar";
             case Type::PARMETIS:   return "ParMETIS";
             case Type::SCOTCH:     return "SCOTCH";
-            case Type::ZOLTAN2:    return "Zoltan2";
+            case Type::ZOLTAN2_SPHYNX: return "Zoltan2_Sphynx";
+            case Type::ZOLTAN_PHG: return "Zoltan_PHG";
+        }
+        return "UNKNOWN";
+    }
+
+    std::string getPartitionStats(Type partitionType) const {
+        switch (partitionType) {
+            case Type::KAHIP:           return "kahip_strat_name: " + kahip_strat_name;
+            case Type::KAMINPAR:        return "kaminpar_strat_name: " + kaminpar_strat_name;
+            case Type::PARMETIS:        return "ParMETIS strat: default";
+            case Type::SCOTCH:          return "ptscotch_strat_name: " + ptscotch_strat_name;
+            case Type::ZOLTAN2_SPHYNX:  return "sphynx_problem_type: " + sphynx_problem_type + "\n" 
+                                             + "sphynx_preconditioner_type: " + sphynx_preconditioner_type + "\n" 
+                                             + "sphynx_tolerance_pow: " + std::to_string(sphynx_tolerance_pow);
+        }
+        return "UNKNOWN";
+    }
+
+    std::string getPartitionPostfix(Type partitionType) const {
+        int imbalancePercent = (int) (imbalance * 100);
+        switch (partitionType) {
+            case Type::KAHIP:           return kahip_strat_name + "_imbalance_" + std::to_string(imbalancePercent);
+            case Type::KAMINPAR:        return kaminpar_strat_name + "_imbalance_" + std::to_string(imbalancePercent);
+            case Type::PARMETIS:        return "imbalance_" + std::to_string(imbalancePercent);
+            case Type::SCOTCH:          return ptscotch_strat_name + "_imbalance_" + std::to_string(imbalancePercent);
+            case Type::ZOLTAN2_SPHYNX:  return sphynx_problem_type + "_" + sphynx_preconditioner_type + "_" + std::to_string(sphynx_tolerance_pow);
         }
         return "UNKNOWN";
     }
 
 };
 
+
 class PartitionMetrics {
 public:
 
     const std::string outputFolder;
 
-    std::unordered_map<int,int> ghost_part;
+    std::vector<int> ghost_global_ids;
+    std::vector<int> ghost_part_ids;
 
     std::vector<int> verticesCounter;
     std::vector<double> vertexImbalance;
 
     std::vector<int> boundaryPerPart;
 
-    std::vector<std::unordered_set<int>> neighbours;
+    std::vector<std::vector<int>> neighbours;
+
+    // --- НОВЫЕ МЕТРИКИ ---
+    std::vector<long long> edgesPerPart;    // Количество ребер в каждом разделе
+    std::vector<double> edgeImbalance;      // Дисбаланс ребер в % (насколько нагружены связи)
+    int maxCommDegree;                      // Максимальное количество соседей у одного раздела
+    long long totalCommVolume;              // Суммарный объем пересылаемых данных (Total Ghost Nodes)
 
     PartitionMetrics(const std::string outputFolder) : outputFolder(outputFolder) {
     }
 
-    void save_partition_info(const Partition partition, const int actualParts, const CSR& csr) {
-        verticesCounter = std::vector<int>(actualParts, 0);
-        vertexImbalance = std::vector<double>(actualParts, 0.0);
-        boundaryPerPart = std::vector<int>(actualParts, 0);
-        neighbours = std::vector<std::unordered_set<int>>(actualParts);
-        ghost_part.clear(); 
+    void save_partition_info(const Partition& partition, const int actualParts, const CSR& csr) {
+        verticesCounter.assign(actualParts, 0);
+        vertexImbalance.assign(actualParts, 0.0);
+        edgesPerPart.assign(actualParts, 0);
+        edgeImbalance.assign(actualParts, 0.0);
+        boundaryPerPart.assign(actualParts, 0);
+        neighbours.clear();
+        ghost_global_ids.clear(); 
+        ghost_part_ids.clear();
 
-        computeVertexImbalance(actualParts, partition.partition);
-        exchange_ghost_parts(csr, partition.partition, actualParts);
-        computeBoundaryVertices(actualParts, csr, partition.partition);
-        countNeighboursSets(partition.partition, actualParts, csr);
+        // 1. Расчет дисбаланса вершин (нагрузка на вычисления CPU)
+        computeVertexImbalance(partition.partition, actualParts);
         
-        if(partition.type == Partition::Type::SCOTCH) {
+        // 2. Расчет дисбаланса ребер (нагрузка на память и локальные операции)
+        computeEdgeImbalance(partition.partition, actualParts, csr);
+        
+        // 3. Обмен ghost-узлами
+        exchange_ghost_parts(partition.partition, actualParts, csr);
+        
+        // 4. Расчет Communication Volume (общая нагрузка на сеть)
+        // В MPI-приложениях объем данных равен количеству уникальных "призрачных" вершин
+        computeCommunicationVolume(partition.partition, actualParts, csr);
+
+        // 5. Расчет граничных вершин (вершины, инициирующие обмен)
+        computeBoundaryVertices(partition.partition, actualParts, csr);
+        
+        // 6. Расчет графа связности разделов
+        countNeighbours(partition.partition, actualParts, csr);
+        
+        // 7. Максимальная степень связности (латентность сети)
+        computeMaxCommDegree();
+        
+         // 8. Расчет Edge Cut и Locality
+        int finalCut = partition.cutEdge;
+        if (partition.type == Partition::Type::SCOTCH || partition.type == Partition::Type::ZOLTAN2_SPHYNX) {
             int totalEdgeParts = 0;
             countCutEdges(partition.partition, actualParts, nullptr, totalEdgeParts, csr);
-            if(csr.rank == 0)
-                std::cout << "Edge cut: " << totalEdgeParts << std::endl;
-            saveMetricsToFile(partition.type, partition.nparts, actualParts, totalEdgeParts, csr.rank, csr.filename);
+            finalCut = totalEdgeParts;
         }
-        else
-            saveMetricsToFile(partition.type, partition.nparts, actualParts, partition.cutEdge, csr.rank, csr.filename);
+        if(csr.rank == 0)
+            std::cout << "Edge cut: " << finalCut << std::endl;
+
+        // 9. Сохранение итогового отчета
+        saveMetricsToFile(partition, finalCut, csr.rank, csr.filename);
     }
 
 private:
@@ -615,20 +671,26 @@ private:
     }
 
     int getPartitionOfVertex(int v, const CSR& csr, const std::vector<int>& partition) {
-        if (csr.vtxdist[csr.rank] <= v && v < csr.vtxdist[csr.rank+1]) {//вершина наша
+        // 1. Проверяем, не наша ли это вершина
+        if (csr.vtxdist[csr.rank] <= v && v < csr.vtxdist[csr.rank + 1]) {
             return partition[v - csr.vtxdist[csr.rank]];
-        } 
+        }
 
-        auto it = ghost_part.find(v);
-        if (it != ghost_part.end())
-            return it->second;
-        std::cerr << "Missing ghost vertex " << v <<std::endl;
+        // 2. Бинарный поиск в отсортированном векторе призрачных вершин
+        auto it = std::lower_bound(ghost_global_ids.begin(), ghost_global_ids.end(), v);
+
+        if (it != ghost_global_ids.end() && *it == v) {
+            // Вычисляем индекс найденного элемента
+            size_t idx = std::distance(ghost_global_ids.begin(), it);
+            return ghost_part_ids[idx];
+        }
+
+        std::cerr << "Rank " << csr.rank << ": Missing ghost vertex " << v << std::endl;
         MPI_Abort(MPI_COMM_WORLD, 1);
-        
         return 0;
     }
 
-    void computeVertexImbalance(const int actualParts, const std::vector<int>& partition) {
+    void computeVertexImbalance(const std::vector<int>& partition, const int actualParts) {
         std::vector<int> local_counts(actualParts, 0);
         for (int p : partition)
             local_counts[p]++;
@@ -644,7 +706,7 @@ private:
         }
     }
 
-    void exchange_ghost_parts(const CSR& csr, const std::vector<int>& partition, const int actualParts) {
+    void exchange_ghost_parts(const std::vector<int>& partition, const int actualParts, const CSR& csr) {
         // 1. Собираем запросы
         std::vector<std::vector<int>> send_requests(csr.size);
         for (int p = 0; p < csr.size; p++) {
@@ -729,18 +791,28 @@ private:
         // 10. Теперь у нас есть part[v] для всех запрошенных вершин
 
         // Соберём map: global vertex → part
-        for (int p = 0; p < csr.size; p++) {
-            for (int i = 0; i < send_counts[p]; i++) {
-                int idx = send_displs[p] + i;
-                int v = send_buf[idx];
-                int pv = recv_answers[idx];
-                ghost_part[v] = pv;
-            }
+        int total_ghosts = send_buf.size(); // это total_send из твоего кода
+        ghost_global_ids.resize(total_ghosts);
+        ghost_part_ids.resize(total_ghosts);
+
+        // Создаем вектор индексов [0, 1, 2, ..., N-1] для косвенной сортировки
+        std::vector<int> p(total_ghosts);
+        std::iota(p.begin(), p.end(), 0);
+
+        // Сортируем индексы на основе значений в send_buf
+        std::sort(p.begin(), p.end(), [&](int i, int j) {
+            return send_buf[i] < send_buf[j];
+        });
+
+        // Заполняем итоговые векторы в правильном (отсортированном) порядке
+        for (int i = 0; i < total_ghosts; i++) {
+            ghost_global_ids[i] = send_buf[p[i]];
+            ghost_part_ids[i] = recv_answers[p[i]];
         }
     }
 
     //вершины, которые имеют соседа в другом кластере
-    void computeBoundaryVertices(const int actualParts, const CSR& csr, const std::vector<int>& partition) {
+    void computeBoundaryVertices(const std::vector<int>& partition, const int actualParts, const CSR& csr) {
         std::vector<int> local_boundary(actualParts, 0);
 
         for (int u = 0; u < partition.size(); u++) {
@@ -768,32 +840,6 @@ private:
     std::string getFileName(const std::string& filename) {
         std::filesystem::path p(filename);
         return p.stem().string();
-    }
-
-    void saveMetricsToFile(const Partition::Type partitionName, const int nparts, const int actualParts, const int cutEdge, const int rank, const std::string filename) {
-        if (rank == 0) {
-            std::string outfile = outputFolder + "/" + getFileName(filename) + "_" + Partition::getPartitionName(partitionName) + "_" + "parts_" + std::to_string(nparts) + "_info";
-            std::ofstream f(outfile);
-            
-            f << "Parts: " << nparts << std::endl;
-            f << "Actual parts: " << actualParts << std::endl;
-            f << "Edge cut: " << cutEdge << std::endl;
-            f << std::endl;
-
-            for (int i = 0; i < actualParts; i++) 
-                f << "Part " << i << ": vertices=" << verticesCounter[i] << ", imbalance=" << vertexImbalance[i] << "%"  << std::endl;
-            f << std::endl;
-
-            for (int i = 0; i < actualParts; i++) 
-                f << "Part " << i << ": boundary vertices=" << boundaryPerPart[i] << std::endl;
-            f << std::endl;
-
-            for (int i = 0; i < actualParts; i++) 
-                f << "Part " << i << ": neighbours=" << neighbours[i].size() << std::endl;
-            f << std::endl;
-
-            std::cout << "Partition info saved to: " << outfile << std::endl;
-        }
     }
 
     void countCutEdges(const std::vector<int>& partition, const int actualParts, std::vector<int>* cutEdgesPerPart, int& totalCutEdges, const CSR& csr) {
@@ -824,73 +870,231 @@ private:
         totalCutEdges /= 2;
     }
 
-    void countNeighboursSets(const std::vector<int>& partition, const int actualParts, const CSR& csr)
-    {
-        // --- 1. Локальные множества ---
-        std::vector<std::unordered_set<int>> local_neighbours(actualParts);
+    struct Edge {
+        int p1, p2;
+        // Операторы для правильной сортировки и удаления дубликатов
+        bool operator<(const Edge& other) const {
+            if (p1 != other.p1) return p1 < other.p1;
+            return p2 < other.p2;
+        }
+        bool operator==(const Edge& other) const {
+            return p1 == other.p1 && p2 == other.p2;
+        }
+    };
 
-        for (int u = 0; u < partition.size(); u++) {
+    void countNeighbours(const std::vector<int>& partition, const int actualParts, const CSR& csr) {
+        // 1. Собираем локальные пары (Edge)
+        std::vector<Edge> local_edges;
+        for (int u = 0; u < (int)partition.size(); u++) {
             int pu = partition[u];
+            for (int i = csr.rows[u]; i < csr.rows[u + 1]; i++) {
+                int v = csr.cols[i];
+                int pv = getPartitionOfVertex(v, csr, partition);
+                if (pu != pv) {
+                    local_edges.push_back({std::min(pu, pv), std::max(pu, pv)});
+                }
+            }
+        }
 
+        // Удаляем локальные дубликаты
+        std::sort(local_edges.begin(), local_edges.end());
+        local_edges.erase(std::unique(local_edges.begin(), local_edges.end()), local_edges.end());
+
+        // 2. Подготовка к MPI_Gatherv
+        int local_edge_count = (int)local_edges.size();
+        std::vector<int> recv_counts_in_edges;
+        if (csr.rank == 0) recv_counts_in_edges.resize(csr.size);
+
+        // Сначала узнаем, сколько Edge-ей у каждого процесса
+        MPI_Gather(&local_edge_count, 1, MPI_INT, recv_counts_in_edges.data(), 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+        // Массивы, которые нужны только Root-у для приема
+        std::vector<int> counts_int;
+        std::vector<int> displs_int;
+        std::vector<Edge> all_edges;
+
+        if (csr.rank == 0) {
+            counts_int.resize(csr.size);
+            displs_int.resize(csr.size);
+            int total_ints = 0;
+            for (int i = 0; i < csr.size; i++) {
+                counts_int[i] = recv_counts_in_edges[i] * 2; // Каждое ребро - это 2 int-а
+                displs_int[i] = total_ints;
+                total_ints += counts_int[i];
+            }
+            all_edges.resize(total_ints / 2); // Резервируем место под структуры Edge
+        }
+
+        // ВНИМАНИЕ: ОДИН ЕДИНСТВЕННЫЙ ВЫЗОВ ДЛЯ ВСЕХ
+        // На не-root рангах counts_int.data() и displs_int.data() могут быть nullptr (т.к. векторы пустые)
+        // Согласно стандарту MPI, на не-root рангах эти аргументы игнорируются.
+        MPI_Gatherv(local_edges.data(), local_edge_count * 2, MPI_INT,
+                    all_edges.data(), counts_int.data(), displs_int.data(), MPI_INT,
+                    0, MPI_COMM_WORLD);
+
+        // 3. Обработка результатов (только Rank 0)
+        if (csr.rank == 0) {
+            neighbours.assign(actualParts, std::vector<int>());
+            
+            // Удаляем дубликаты, пришедшие от разных процессов
+            std::sort(all_edges.begin(), all_edges.end());
+            all_edges.erase(std::unique(all_edges.begin(), all_edges.end()), all_edges.end());
+
+            for (const auto& e : all_edges) {
+                neighbours[e.p1].push_back(e.p2);
+                neighbours[e.p2].push_back(e.p1);
+            }
+            
+            // Сортируем списки соседей для каждого раздела
+            for (auto& list : neighbours) {
+                std::sort(list.begin(), list.end());
+            }
+        }
+    }
+
+    void computeEdgeImbalance(const std::vector<int>& partition, const int actualParts, const CSR& csr) {
+        std::vector<long long> local_edges(actualParts, 0);
+        for (int i = 0; i < csr.local_rows; i++) {
+            local_edges[partition[i]] += (csr.rows[i+1] - csr.rows[i]);
+        }
+        
+        MPI_Allreduce(local_edges.data(), edgesPerPart.data(), actualParts, MPI_LONG_LONG, MPI_SUM, MPI_COMM_WORLD);
+
+        long long total_e = 0;
+        for (long long e : edgesPerPart) total_e += e;
+        double avg_e = (double)total_e / actualParts;
+
+        for (int i = 0; i < actualParts; i++) {
+            edgeImbalance[i] = (avg_e > 0) ? (edgesPerPart[i] / avg_e - 1.0) * 100.0 : 0.0;
+        }
+    }
+
+    void computeCommunicationVolume(const std::vector<int>& partition, const int actualParts, const CSR& csr) {
+        // 1. Для каждого локального раздела (pu) соберем список уникальных глобальных ID вершин (v),
+        // которые ему нужны из других разделов.
+        std::vector<std::vector<int>> unique_ghosts_per_part(actualParts);
+
+        for (int u = 0; u < csr.local_rows; u++) {
+            int pu = partition[u];
             for (int i = csr.rows[u]; i < csr.rows[u + 1]; i++) {
                 int v = csr.cols[i];
                 int pv = getPartitionOfVertex(v, csr, partition);
 
                 if (pu != pv) {
-                    local_neighbours[pu].insert(pv);
-                    local_neighbours[pv].insert(pu);
+                    // Разделу pu нужна вершина v из чужого раздела
+                    unique_ghosts_per_part[pu].push_back(v);
                 }
             }
         }
 
-        // --- 2. Сериализация ---
-        // формат: [p, size, list..., p, size, list...]
-
-        std::vector<int> send_buf;
-
+        // 2. Оставляем только уникальные ID для каждого раздела на текущем ранге
+        long long local_total_vol = 0;
         for (int p = 0; p < actualParts; p++) {
-            send_buf.push_back(p);
-            send_buf.push_back(local_neighbours[p].size());
+            if (unique_ghosts_per_part[p].empty()) continue;
 
-            for (int x : local_neighbours[p])
-                send_buf.push_back(x);
+            std::sort(unique_ghosts_per_part[p].begin(), unique_ghosts_per_part[p].end());
+            unique_ghosts_per_part[p].erase(
+                std::unique(unique_ghosts_per_part[p].begin(), unique_ghosts_per_part[p].end()), 
+                unique_ghosts_per_part[p].end()
+            );
+
+            local_total_vol += unique_ghosts_per_part[p].size();
         }
 
-        int send_size = send_buf.size();
+        // 3. Суммируем по всем MPI-процессам. 
+        // Примечание: Если один раздел (Partition ID) разнесен по разным MPI-рангам, 
+        // эта метрика покажет суммарный объем входящих данных для всех частей этого раздела.
+        MPI_Allreduce(&local_total_vol, &totalCommVolume, 1, MPI_LONG_LONG, MPI_SUM, MPI_COMM_WORLD);
+    }
 
-        // --- 3. Обмен размерами ---
-        std::vector<int> recv_sizes(csr.size);
-
-        MPI_Allgather(&send_size, 1, MPI_INT,
-                    recv_sizes.data(), 1, MPI_INT,
-                    MPI_COMM_WORLD);
-
-        // --- 4. Смещения ---
-        std::vector<int> displs(csr.size, 0);
-        int total_recv = 0;
-
-        for (int i = 0; i < csr.size; i++) {
-            displs[i] = total_recv;
-            total_recv += recv_sizes[i];
+    void computeMaxCommDegree() {
+        int local_max = 0;
+        // На Rank 0 переменная neighbours заполнена полностью после countNeighbours
+        for (const auto& list : neighbours) {
+            local_max = std::max(local_max, (int)list.size());
         }
+        maxCommDegree = local_max;
+    }
 
-        std::vector<int> recv_buf(total_recv);
-
-        // --- 5. Обмен данными ---
-        MPI_Allgatherv(send_buf.data(), send_size, MPI_INT,
-                    recv_buf.data(), recv_sizes.data(), displs.data(), MPI_INT,
-                    MPI_COMM_WORLD);
-
-        // --- 6. Восстановление глобальных множеств ---
-        int idx = 0;
-
-        while (idx < total_recv) {
-            int p = recv_buf[idx++];
-            int sz = recv_buf[idx++];
-            for (int i = 0; i < sz; i++) {
-                int neigh_p = recv_buf[idx++];
-                neighbours[p].insert(neigh_p);
+     void saveMetricsToFile(const Partition& partition, const int cutEdge, const int rank, const std::string filename) {
+        if (rank == 0) {
+            std::string outfile = outputFolder + "/" + getFileName(filename) + "_" + Partition::getPartitionName(partition.type) 
+                                                + "_p" + std::to_string(partition.nparts) + "_" + partition.postfix + "_info";
+            std::ofstream f(outfile);
+            if (!f.is_open()) {
+                std::cout << "ERROR: Failed to open file for writing: " << outfile << std::endl;
+                return;
             }
+
+            // 1. Вычисляем агрегированную статистику
+            int maxBoundary = 0;
+            double maxVertexImbalance = 0.0;
+            double maxEdgeImbalance = 0.0;
+            long long totalVertices = 0;
+            long long totalEdges = 0;
+
+            for (int i = 0; i < partition.actualParts; i++) {
+                if (std::abs(vertexImbalance[i]) > std::abs(maxVertexImbalance)) 
+                    maxVertexImbalance = vertexImbalance[i];
+                
+                if (std::abs(edgeImbalance[i]) > std::abs(maxEdgeImbalance)) 
+                    maxEdgeImbalance = edgeImbalance[i];
+                
+                if (boundaryPerPart[i] > maxBoundary)
+                    maxBoundary = boundaryPerPart[i];
+                
+                totalVertices += verticesCounter[i];
+                totalEdges += edgesPerPart[i];
+            }
+
+            f << "======================================================================" << std::endl;
+            f << " PARTITION REPORT: " << Partition::getPartitionName(partition.type) << std::endl;
+            f << "======================================================================" << std::endl;
+            f << "File:             " << filename << std::endl;
+            f << partition.getPartitionStats(partition.type) << std::endl;
+            f << "Seed:             " << partition.seed << std::endl;
+            f << "Total Edge Vol:   " << totalEdges << std::endl;
+            f << "Total Vertex Vol: " << totalVertices << std::endl;
+            f << "Target Parts:     " << partition.nparts << std::endl;
+            f << "Actual Parts:     " << partition.actualParts << std::endl;
+            f << "Target Imbalance: " << (partition.imbalance * 100.0) << "%" << std::endl;
+            f << "----------------------------------------------------------------------" << std::endl;
+            f << "Edge Cut:              " << cutEdge << std::endl;
+            f << "Max Neighbour Degree:  " << maxCommDegree << std::endl;
+            f << "Max Boundary Degree:   " << maxBoundary << std::endl;
+            f << "Total Comm Vol:        " << totalCommVolume << std::endl;
+            f << "Max Vertex imbalance:  " << maxVertexImbalance << std::endl;
+            f << "Max Edge imbalance:    " << maxEdgeImbalance << std::endl;    
+            f << "Time Total (sec):      " << std::fixed << std::setprecision(4) << partition.time_total << std::endl;
+            f << "Time Solve Only (sec): " << std::fixed << std::setprecision(4) << partition.time_solve << std::endl;
+            f << "Overhead (sec):        " << std::fixed << std::setprecision(4) << (partition.time_total - partition.time_solve) << std::endl;
+            f << "======================================================================" << std::endl;
+            f << std::endl;
+
+            f << std::left << std::setw(8)  << "Part" 
+              << std::setw(12) << "Vertices" 
+              << std::setw(12) << "V-Imb %" 
+              << std::setw(12) << "Edges" 
+              << std::setw(12) << "E-Imb %" 
+              << std::setw(12) << "Boundary" 
+              << std::setw(10) << "Neighbors" << std::endl;
+            f << "----------------------------------------------------------------------" << std::endl;
+
+            f << std::fixed << std::setprecision(2);
+            for (int i = 0; i < partition.actualParts; i++) {
+                f << std::left << std::setw(8)  << i 
+                  << std::setw(12) << verticesCounter[i] 
+                  << std::setw(12) << vertexImbalance[i] 
+                  << std::setw(12) << edgesPerPart[i] 
+                  << std::setw(12) << edgeImbalance[i] 
+                  << std::setw(12) << boundaryPerPart[i] 
+                  << std::setw(10) << neighbours[i].size() << std::endl;
+            }
+            f << "======================================================================" << std::endl;
+
+            f.flush();
+            f.close();
+            std::cout << "Partition report saved to: " << outfile << std::endl;
         }
     }
 
@@ -949,52 +1153,127 @@ void start_partitions(const CSR& csr, PartitionMetrics& partitionMetrics, const 
         std::cout << std::endl;
     }
 
-    partition.run(Partition::Type::SCOTCH, csr);
-    partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
-    if (csr.rank == 0) {
-        std::cout << std::endl;
+
+    std::vector<std::string> scotch_strats = {"SCOTCH_STRATQUALITY", "SCOTCH_STRATBALANCE", "SCOTCH_STRATSPEED"};
+    for (const auto& strat : scotch_strats) {
+        partition.ptscotch_strat_name = strat;
+        partition.run(Partition::Type::SCOTCH, csr);
+        partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
+        if (csr.rank == 0) {
+            std::cout << std::endl;
+        }
     }
 
-    partition.run(Partition::Type::KAHIP, csr);
-    partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
-    if(csr.rank == 0) {
-        std::cout << std::endl;
+    std::vector<std::string> kahip_strats = {"ULTRAFASTMESH", "FASTMESH"};//{"ULTRAFASTMESH", "FASTMESH", "ECOMESH"}; ECOMESH зависает на маленьких графах
+    for (const auto& strat : kahip_strats) {
+        partition.kahip_strat_name = strat;
+        partition.run(Partition::Type::KAHIP, csr);
+        partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
+        if (csr.rank == 0) {
+            std::cout << std::endl;
+        }
     }
 
-    partition.run(Partition::Type::KAMINPAR, csr);
-    partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
+    std::vector<std::string> kaminpar_strats = {"create_default_context", "create_strong_context"};// {"create_default_context", "create_strong_context", "create_xterapart_context"}; create_xterapart_context зависает на маленьких графах
+    for (const auto& strat : kaminpar_strats) {
+        partition.kaminpar_strat_name = strat;
+        partition.run(Partition::Type::KAMINPAR, csr);
+        partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
+        if (csr.rank == 0) {
+            std::cout << std::endl;
+        }
+    }
+
+
+    std::vector<std::string> sphynx_types = {"combinatorial", "generalized", "normalized"};
+    std::vector<std::string> sphynx_preconds = {"muelu", "jacobi", "polynomial"};
+    std::vector<int> tolerances = {6}; //{4, 6, 8};
+
+    for (const auto& type : sphynx_types) {
+        for (const auto& prec : sphynx_preconds) {
+            for (int tol : tolerances) {
+                partition.sphynx_problem_type = type;
+                partition.sphynx_preconditioner_type = prec;
+                partition.sphynx_tolerance_pow = tol;
+
+                partition.run(Partition::Type::ZOLTAN2_SPHYNX, csr);
+                partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
+                if (csr.rank == 0) {
+                    std::cout << std::endl;
+                }
+            }
+        }
+    }
+
 }
 
 int main(int argc, char* argv[]) {
-    MPI_Init(&argc, &argv);
-    int rank, size;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    // ScopeGuard инициализирует MPI и Kokkos
+    Tpetra::ScopeGuard tpetraScope(&argc, &argv);
+    
+    { // Открываем блок, чтобы все объекты удалились до конца main
+        int rank, size;
+        auto comm = Tpetra::getDefaultComm();
+        rank = comm->getRank();
+        size = comm->getSize();
 
-    if (argc < 4) {
-        if (rank == 0) {
-            std::cout << "Usage: mpirun -np N ./program.exe matrixCSR nparts outputFolder\n";
+        if (argc < 4) {
+            if (rank == 0) {
+                std::cout << "Usage: mpirun -np N ./program.exe matrixCSR nparts outputFolder\n";
+            }
+            return 0;
         }
-        MPI_Finalize();
-        return 0;
-    }
 
-    const std::string filename = std::string(argv[1]);
-    const int nparts = atoi(argv[2]);
-    const std::string outputFolder = argv[3];
+        const std::string filename = std::string(argv[1]);
+        const int nparts = atoi(argv[2]);
+        const std::string outputFolder = argv[3];
 
-    if(!correctInitParams(rank, filename, nparts, outputFolder)) {
-        MPI_Finalize();
-        return 0;
-    }
+        if(!correctInitParams(rank, filename, nparts, outputFolder)) {
+            return 0;
+        }
 
-    CSR csr(rank, size, filename);
-    csr.readGraph();
+        CSR csr(rank, size, filename);
+        csr.readGraph();
 
-    PartitionMetrics partitionMetrics(outputFolder);
+        PartitionMetrics partitionMetrics(outputFolder);
+        start_partitions(csr, partitionMetrics, nparts);
 
-    start_partitions(csr, partitionMetrics, nparts);
+    } // Здесь вызываются деструкторы csr, partitionMetrics и т.д.
 
-    MPI_Finalize();
-    return 0;
+    return 0; 
+    // Здесь ScopeGuard автоматически завершит Kokkos, а затем MPI.
 }
+
+// int main(int argc, char* argv[]) {
+//     MPI_Init(&argc, &argv);
+//     int rank, size;
+//     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+//     MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+//     if (argc < 4) {
+//         if (rank == 0) {
+//             std::cout << "Usage: mpirun -np N ./program.exe matrixCSR nparts outputFolder\n";
+//         }
+//         MPI_Finalize();
+//         return 0;
+//     }
+
+//     const std::string filename = std::string(argv[1]);
+//     const int nparts = atoi(argv[2]);
+//     const std::string outputFolder = argv[3];
+
+//     if(!correctInitParams(rank, filename, nparts, outputFolder)) {
+//         MPI_Finalize();
+//         return 0;
+//     }
+
+//     CSR csr(rank, size, filename);
+//     csr.readGraph();
+
+//     PartitionMetrics partitionMetrics(outputFolder);
+
+//     start_partitions(csr, partitionMetrics, nparts);
+
+//     MPI_Finalize();
+//     return 0;
+// }

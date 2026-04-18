@@ -1,0 +1,30 @@
+======================================================================
+ PARTITION REPORT: SCOTCH
+======================================================================
+File:             CSR/test
+ptscotch_strat_name: SCOTCH_STRATSPEED
+Seed:             42
+Total Edge Vol:   1172
+Total Vertex Vol: 494
+Target Parts:     4
+Actual Parts:     4
+Target Imbalance: 5%
+----------------------------------------------------------------------
+Edge Cut:              19
+Max Neighbour Degree:  3
+Max Boundary Degree:   11
+Total Comm Vol:        38
+Max Vertex imbalance:  -0.404858
+Max Edge imbalance:    -5.46075
+Time Total (sec):      0.0145
+Time Solve Only (sec): 0.0143
+Overhead (sec):        0.0002
+======================================================================
+
+Part    Vertices    V-Imb %     Edges       E-Imb %     Boundary    Neighbors 
+----------------------------------------------------------------------
+0       123         -0.40       309         5.46        11          3         
+1       124         0.40        290         -1.02       6           3         
+2       123         -0.40       277         -5.46       7           3         
+3       124         0.40        296         1.02        8           3         
+======================================================================

@@ -1,0 +1,32 @@
+======================================================================
+ PARTITION REPORT: Zoltan2_Sphynx
+======================================================================
+File:             CSR/test
+sphynx_problem_type: normalized
+sphynx_preconditioner_type: muelu
+sphynx_tolerance_pow: 6
+Seed:             42
+Total Edge Vol:   1172
+Total Vertex Vol: 494
+Target Parts:     4
+Actual Parts:     4
+Target Imbalance: 5%
+----------------------------------------------------------------------
+Edge Cut:              116
+Max Neighbour Degree:  3
+Max Boundary Degree:   61
+Total Comm Vol:        195
+Max Vertex imbalance:  -0.404858
+Max Edge imbalance:    20.8191
+Time Total (sec):      0.0180
+Time Solve Only (sec): 0.0169
+Overhead (sec):        0.0011
+======================================================================
+
+Part    Vertices    V-Imb %     Edges       E-Imb %     Boundary    Neighbors 
+----------------------------------------------------------------------
+0       124         0.40        305         4.10        26          3         
+1       123         -0.40       354         20.82       33          2         
+2       124         0.40        278         -5.12       25          2         
+3       123         -0.40       235         -19.80      61          3         
+======================================================================
