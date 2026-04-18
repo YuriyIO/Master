@@ -1,0 +1,30 @@
+======================================================================
+ PARTITION REPORT: KaHIP
+======================================================================
+File:             CSR/test
+kahip_strat_name: FASTMESH
+Seed:             42
+Total Edge Vol:   1172
+Total Vertex Vol: 494
+Target Parts:     4
+Actual Parts:     4
+Target Imbalance: 5%
+----------------------------------------------------------------------
+Edge Cut:              20
+Max Neighbour Degree:  3
+Max Boundary Degree:   14
+Total Comm Vol:        40
+Max Vertex imbalance:  -6.07287
+Max Edge imbalance:    -9.89761
+Time Total (sec):      0.0093
+Time Solve Only (sec): 0.0093
+Overhead (sec):        0.0000
+======================================================================
+
+Part    Vertices    V-Imb %     Edges       E-Imb %     Boundary    Neighbors 
+----------------------------------------------------------------------
+0       127         2.83        316         7.85        14          3         
+1       124         0.40        296         1.02        9           2         
+2       116         -6.07       264         -9.90       7           3         
+3       127         2.83        296         1.02        6           2         
+======================================================================
