@@ -1,0 +1,222 @@
+Сделал так
+cmake -B build --preset=distributed \
+  -DCMAKE_C_FLAGS="-mcpu=native" \
+  -DCMAKE_CXX_FLAGS="-mcpu=native" \
+  -DKAMINPAR_BUILD_TESTS=OFF \
+  -DKAGEN_OPTIMIZE_FOR_NATIVE=OFF \
+  -DTHIRDPARTY_OPTIMIZE_FOR_NATIVE=OFF \
+  -DCMAKE_PREFIX_PATH="/home_edu/edu-cmc-sqi23/edu-cmc-sqi23-25/local_libs/sparsehash" \
+  -DCMAKE_INSTALL_PREFIX="/home_edu/edu-cmc-sqi23/edu-cmc-sqi23-25/local_libs/KaMinPar"
+Получил
+
+[edu-cmc-sqi23-25@polus-ib KaMinPar]$ cmake -B build --preset=distributed \
+>   -DCMAKE_C_FLAGS="-mcpu=native" \
+>   -DCMAKE_CXX_FLAGS="-mcpu=native" \
+>   -DKAMINPAR_BUILD_TESTS=OFF \
+>   -DKAGEN_OPTIMIZE_FOR_NATIVE=OFF \
+>   -DTHIRDPARTY_OPTIMIZE_FOR_NATIVE=OFF \
+>   -DCMAKE_PREFIX_PATH="/home_edu/edu-cmc-sqi23/edu-cmc-sqi23-25/local_libs/sparsehash" \
+>   -DCMAKE_INSTALL_PREFIX="/home_edu/edu-cmc-sqi23/edu-cmc-sqi23-25/local_libs/KaMinPar"
+Preset CMake variables:
+
+  CMAKE_BUILD_TYPE="Release"
+  KAMINPAR_64BIT_EDGE_IDS="OFF"
+  KAMINPAR_64BIT_IDS="OFF"
+  KAMINPAR_64BIT_NODE_IDS="OFF"
+  KAMINPAR_64BIT_WEIGHTS="ON"
+  KAMINPAR_BUILD_DISTRIBUTED="ON"
+  KAMINPAR_BUILD_WITH_SPARSEHASH="ON"
+
+-- The C compiler identification is GNU 9.3.1
+-- The CXX compiler identification is GNU 9.3.1
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /opt/rh/devtoolset-9/root/usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /opt/rh/devtoolset-9/root/usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Distributed build: enabling 64 bit weights.
+-- KAssertion level: light
+-- Performing Test COMPILER_SUPPORTS_MSSE41
+-- Performing Test COMPILER_SUPPORTS_MSSE41 - Failed
+-- Performing Test COMPILER_SUPPORTS_MCX16
+-- Performing Test COMPILER_SUPPORTS_MCX16 - Failed
+-- Statistics: disabled
+-- Heap Profiling: disabled
+-- Page Profiling: disabled
+-- Timers: enabled
+-- Timer barriers: enabled
+-- TBB malloc: enabled
+-- Huge pages: enabled
+-- Graph compression summary:
+  High-degree encoding: enabled
+  Interval encoding: enabled
+  Run-length encoding: disabled
+  StreamVByte encoding: disabled
+  Fast decoding: disabled
+-- Data type summary:
+  {shm, dist}::NodeID: std::uint32_t
+  {shm, dist}::EdgeID: std::uint32_t
+  shm::{Node, Edge}Weight: std::int64_t
+  {dist::Global{Node, Edge}ID: std::uint64_t
+  dist::Global{Node, Edge}Weight: std::int64_t
+  dist::{Node, Edge}Weight: std::int32_t
+-- Found Git: /usr/bin/git (found version "1.8.3.1")
+-- Found PkgConfig: /usr/bin/pkg-config (found version "0.27.1")
+-- Found Sparsehash: /home_edu/edu-cmc-sqi23/edu-cmc-sqi23-25/local_libs/sparsehash/include
+-- Found libsparsehash: /home_edu/edu-cmc-sqi23/edu-cmc-sqi23-25/local_libs/sparsehash/include
+-- Using FetchContent to get TBB...
+
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+-- Check if compiler accepts -pthread
+-- Check if compiler accepts -pthread - yes
+-- Found Threads: TRUE
+-- Checking for one of the modules 'hwloc'
+-- Looking for getcontext
+-- Looking for getcontext - found
+-- IPO enabled
+-- GNU Assembler version: 2.32  (2032)
+-- HWLOC target HWLOC::hwloc_static doesn't exist. The tbbbind target cannot be created
+-- HWLOC target HWLOC::hwloc_2 doesn't exist. The tbbbind_2_0 target cannot be created
+-- HWLOC target HWLOC::hwloc_2_5 doesn't exist. The tbbbind_2_5 target cannot be created
+-- Using FetchContent to get kassert...
+
+-- Exception mode enabled.
+-- Assertion level set to 10.
+-- Looking for pthread_create in pthreads
+-- Looking for pthread_create in pthreads - not found
+-- Looking for pthread_create in pthread
+-- Looking for pthread_create in pthread - found
+-- Looking for xxhash
+-- Looking for xxhash -- found
+-- Using FetchContent to get KaGen...
+-- Building without any dependencies.
+-- Performing Test KAGEN_HAS_MARCH_NATIVE
+-- Performing Test KAGEN_HAS_MARCH_NATIVE - Failed
+-- Found MPI_C: /polusfs/soft/ompi4.0.0/lib/libmpi.so (found version "3.1")
+-- Found MPI_CXX: /polusfs/soft/ompi4.0.0/lib/libmpi.so (found version "3.1")
+-- Found MPI: TRUE (found version "3.1")
+-- Apps disabled.
+-- Examples disabled.
+-- Using FetchContent to get GoogleTest...
+Unknown option: -C
+usage: git [--version] [--help] [-c name=value]
+           [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]
+           [-p|--paginate|--no-pager] [--no-replace-objects] [--bare]
+           [--git-dir=<path>] [--work-tree=<path>] [--namespace=<name>]
+           <command> [<args>]
+-- Enabled common test: test_common_binary_heap
+-- Enabled common test: test_common_fast_reset_array
+-- Enabled common test: test_common_marker
+-- Enabled common test: test_common_static_array
+-- Enabled common test: test_common_compact_static_array
+-- Enabled common test: test_common_dynamic_map
+-- Enabled common test: test_common_compact_hash_map
+-- Enabled common test: test_common_math
+-- Enabled common test: test_common_string
+-- Enabled common test: test_common_parallel_algorithm
+-- Enabled common test: test_common_parallel_aligned_prefix_sum
+-- Enabled common test: test_common_parallel_quickselect
+-- Enabled common test: test_common_varint
+-- Enabled common test: test_common_streamvbyte
+-- Enabled shared-memory test: test_shm_endtoend
+-- Enabled shared-memory test: test_shm_metrics
+-- Enabled shared-memory test: test_shm_subgraph_extraction
+-- Enabled shared-memory test: test_shm_partition_utils
+-- Enabled shared-memory test: test_compressed_graph_builder
+-- Enabled shared-memory test: test_shm_cluster_contraction
+-- Enabled shared-memory test: test_shm_graph
+-- Enabled shared-memory test: test_shm_delta_partitioned_graph
+-- Enabled shared-memory test: test_shm_compressed_graph
+-- Enabled shared-memory test: test_shm_gain_caches
+-- Enabled distributed test: test_dist_endtoend, PEs: 1;2;4
+-- Enabled distributed test: test_dist_coarsening_cluster_contraction, PEs: 1
+-- Enabled distributed test: test_dist_coarsening_cluster_contraction_internal, PEs: 1
+-- Enabled distributed test: test_dist_compressed_graph, PEs: 1
+-- Enabled distributed test: test_dist_io_metis_parser, PEs: 1;2;3;4;5;8
+-- Enabled distributed test: test_dist_graphutils_block_extractor, PEs: 1;4
+-- Enabled distributed test: test_dist_graphutils_rearrangement, PEs: 1;4
+-- Enabled distributed test: test_dist_graphutils_bfs_extractor, PEs: 1;4
+-- Enabled distributed test: test_dist_graphutils_allgather, PEs: 1;4
+-- Enabled distributed test: test_dist_greedy_node_coloring, PEs: 1;4
+-- Enabled distributed test: test_dist_independent_set, PEs: 1;4
+-- Enabled MPI test: test_mpi_sparse_alltoall, PEs: 1;4;11
+-- Enabled MPI test: test_mpi_graph_topology, PEs: 1
+-- Enabled MPI test: test_mpi_sparse_allreduce, PEs: 1;4;8
+-- Enabled app: KaMinPar
+-- Enabled app: dKaMinPar
+-- Configuring done (234.4s)
+-- Generating done (0.6s)
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    KAGEN_OPTIMIZE_FOR_NATIVE
+    THIRDPARTY_OPTIMIZE_FOR_NATIVE
+
+
+-- Build files have been written to: /home_edu/edu-cmc-sqi23/edu-cmc-sqi23-25/local_libs/KaMinPar/build
+
+
+cmake --build build --parallel 8
+[  0%] Building CXX object _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/frontend.cpp.o
+[  1%] Building CXX object _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/backend.cpp.o
+[  2%] Building CXX object _deps/googletest-build/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.o
+[  2%] Building CXX object _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/large_objects.cpp.o
+[  2%] Building CXX object _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/tbbmalloc.cpp.o
+[  2%] Building CXX object _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/backref.cpp.o
+[  2%] Building CXX object _deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/address_waiter.cpp.o
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+gmake[2]: *** [_deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/build.make:104: _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/frontend.cpp.o] Error 1
+gmake[2]: *** Waiting for unfinished jobs....
+gmake[2]: *** [_deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/build.make:76: _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/backend.cpp.o] Error 1
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+gmake[2]: *** [_deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/build.make:118: _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/large_objects.cpp.o] Error 1
+gmake[2]: *** [_deps/googletest-build/googletest/CMakeFiles/gtest.dir/build.make:76: _deps/googletest-build/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:1459: _deps/googletest-build/googletest/CMakeFiles/gtest.dir/all] Error 2
+gmake[1]: *** Waiting for unfinished jobs....
+gmake[2]: *** [_deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/build.make:76: _deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/address_waiter.cpp.o] Error 1
+gmake[2]: *** [_deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/build.make:132: _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/tbbmalloc.cpp.o] Error 1
+gmake[2]: *** Waiting for unfinished jobs....
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+gmake[2]: *** [_deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/build.make:90: _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/backref.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:1328: _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/all] Error 2
+[  2%] Building CXX object _deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/arena.cpp.o
+[  3%] Building CXX object _deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/arena_slot.cpp.o
+[  3%] Building CXX object _deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/allocator.cpp.o
+[  3%] Building CXX object _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/ckagen.cpp.o
+[  3%] Building CXX object _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/context.cpp.o
+[  3%] Building CXX object _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/edgeweight_generators/hashing_based_generator.cpp.o
+[  4%] Building CXX object _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/edgeweight_generators/uniform_random_generator.cpp.o
+[  4%] Building CXX object _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/external_memory_facade.cpp.o
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+gmake[2]: *** [_deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/build.make:104: _deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/arena.cpp.o] Error 1
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+gmake[2]: *** [_deps/kagen-build/kagen/CMakeFiles/KaGen.dir/build.make:76: _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/ckagen.cpp.o] Error 1
+gmake[2]: *** Waiting for unfinished jobs....
+gmake[2]: *** [_deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/build.make:90: _deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/allocator.cpp.o] Error 1
+gmake[2]: *** [_deps/kagen-build/kagen/CMakeFiles/KaGen.dir/build.make:90: _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/context.cpp.o] Error 1
+gmake[2]: *** [_deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/build.make:118: _deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/arena_slot.cpp.o] Error 1
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+gmake[1]: *** [CMakeFiles/Makefile2:1302: _deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/all] Error 2
+gmake[2]: *** [_deps/kagen-build/kagen/CMakeFiles/KaGen.dir/build.make:104: _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/edgeweight_generators/hashing_based_generator.cpp.o] Error 1
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+gmake[2]: *** [_deps/kagen-build/kagen/CMakeFiles/KaGen.dir/build.make:118: _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/edgeweight_generators/uniform_random_generator.cpp.o] Error 1
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+gmake[2]: *** [_deps/kagen-build/kagen/CMakeFiles/KaGen.dir/build.make:132: _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/external_memory_facade.cpp.o] Error 1
+[  4%] Building CXX object _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/factories.cpp.o
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+gmake[2]: *** [_deps/kagen-build/kagen/CMakeFiles/KaGen.dir/build.make:146: _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/factories.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:1380: _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/all] Error 2
+gmake: *** [Makefile:166: all] Error 2

@@ -1,0 +1,518 @@
+KaMinPar
+
+cmake --build build --parallel 8
+[  0%] Building CXX object _deps/googletest-build/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.o
+[  0%] Building CXX object _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/backend.cpp.o
+[  2%] Building CXX object _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/frontend.cpp.o
+[  2%] Building CXX object _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/backref.cpp.o
+[  2%] Building CXX object _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/tbbmalloc.cpp.o
+[  2%] Building CXX object _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/large_objects.cpp.o
+[  2%] Building CXX object _deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/address_waiter.cpp.o
+[  2%] Building CXX object _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/ckagen.cpp.o
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+gmake[2]: *** [_deps/googletest-build/googletest/CMakeFiles/gtest.dir/build.make:76: _deps/googletest-build/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:1459: _deps/googletest-build/googletest/CMakeFiles/gtest.dir/all] Error 2
+gmake[1]: *** Waiting for unfinished jobs....
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+gmake[2]: *** [_deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/build.make:76: _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/backend.cpp.o] Error 1
+gmake[2]: *** Waiting for unfinished jobs....
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+gmake[2]: *** [_deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/build.make:104: _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/frontend.cpp.o] Error 1
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+gmake[2]: *** [_deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/build.make:132: _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/tbbmalloc.cpp.o] Error 1
+gmake[2]: *** [_deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/build.make:90: _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/backref.cpp.o] Error 1
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+gmake[2]: *** [_deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/build.make:118: _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/large_objects.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:1328: _deps/tbb-build/src/tbbmalloc/CMakeFiles/tbbmalloc.dir/all] Error 2
+gmake[2]: *** [_deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/build.make:76: _deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/address_waiter.cpp.o] Error 1
+gmake[2]: *** Waiting for unfinished jobs....
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+gmake[2]: *** [_deps/kagen-build/kagen/CMakeFiles/KaGen.dir/build.make:76: _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/ckagen.cpp.o] Error 1
+gmake[2]: *** Waiting for unfinished jobs....
+[  3%] Building CXX object _deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/allocator.cpp.o
+[  3%] Building CXX object _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/context.cpp.o
+[  3%] Building CXX object _deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/arena.cpp.o
+[  3%] Building CXX object _deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/arena_slot.cpp.o
+[  3%] Building CXX object _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/edgeweight_generators/hashing_based_generator.cpp.o
+[  5%] Building CXX object _deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/concurrent_bounded_queue.cpp.o
+[  5%] Building CXX object _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/edgeweight_generators/uniform_random_generator.cpp.o
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+gmake[2]: *** [_deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/build.make:90: _deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/allocator.cpp.o] Error 1
+gmake[2]: *** [_deps/kagen-build/kagen/CMakeFiles/KaGen.dir/build.make:90: _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/context.cpp.o] Error 1
+gmake[2]: *** [_deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/build.make:104: _deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/arena.cpp.o] Error 1
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+gmake[2]: *** [_deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/build.make:118: _deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/arena_slot.cpp.o] Error 1
+gmake[2]: *** [_deps/kagen-build/kagen/CMakeFiles/KaGen.dir/build.make:104: _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/edgeweight_generators/hashing_based_generator.cpp.o] Error 1
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+c++: error: unrecognized command line option ‘-march=native’; did you mean ‘-mcpu=native’?
+gmake[2]: *** [_deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/build.make:132: _deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/concurrent_bounded_queue.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:1302: _deps/tbb-build/src/tbb/CMakeFiles/tbb.dir/all] Error 2
+gmake[2]: *** [_deps/kagen-build/kagen/CMakeFiles/KaGen.dir/build.make:118: _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/edgeweight_generators/uniform_random_generator.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:1380: _deps/kagen-build/kagen/CMakeFiles/KaGen.dir/all] Error 2
+gmake: *** [Makefile:166: all] Error 2
+
+
+
+
+scotch
+
+
+
+
+ make -j8
+[  1%] Generate parser_yy.c and parser_ly.h using Bison
+[  2%] Copy esmumps.h to include directory
+[  2%] Building C object src/libscotch/CMakeFiles/dummysizes.dir/dummysizes.c.o
+[  2%] Generate parser_yy.c and parser_ly.h using Bison
+[  2%] Built target esmumps_h
+[  2%] Linking C executable dummysizes
+[  2%] Built target parser_yy_c
+[  2%] Generate parser_ll.c using Flex
+[  2%] Built target dummysizes
+[  2%] Built target parser_ll_c
+[  2%] Generating parmetis.h
+[  2%] Generate .f90
+[  2%] Generate scotchf.h
+[  3%] Generating metisf.h
+[  3%] Generate scotch.h
+[  3%] Built target test_libmetis_dual_f.f90_tmp
+[  3%] Built target scotchf_h
+[  3%] Built target parmetis_h
+[  3%] Built target metisf_h
+[  3%] Built target scotch_h
+[  3%] Generating test_libmetis_dual_f.f90
+[  4%] Building C object src/libscotch/CMakeFiles/scotcherr.dir/library_error.c.o
+[  4%] Building C object src/libscotch/CMakeFiles/scotcherrexit.dir/library_error_exit.c.o
+[  4%] Building C object src/libscotch/CMakeFiles/ptdummysizes.dir/dummysizes.c.o
+[  4%] Built target test_libmetis_dual_f.f90_src
+[  5%] Linking C static library ../../lib/libscotcherr.a
+[  5%] Built target scotcherr
+[  5%] Linking C static library ../../lib/libscotcherrexit.a
+[  5%] Linking C executable ptdummysizes
+[  5%] Built target scotcherrexit
+[  5%] Built target ptdummysizes
+[  5%] Generate ptscotchf.h
+[  5%] Generate ptscotch.h
+[  5%] Built target ptscotch_h
+[  5%] Built target ptscotchf_h
+[  5%] Building C object src/libscotch/CMakeFiles/ptscotcherr.dir/library_error.c.o
+[  5%] Building C object src/libscotch/CMakeFiles/ptscotcherrexit.dir/library_error_exit.c.o
+[  5%] Building C object src/libscotch/CMakeFiles/scotch.dir/arch_build2.c.o
+[  5%] Building C object src/libscotch/CMakeFiles/scotch.dir/arch_cmplt.c.o
+[  6%] Building C object src/libscotch/CMakeFiles/scotch.dir/arch_deco.c.o
+[  6%] Building C object src/libscotch/CMakeFiles/scotch.dir/arch_cmpltw.c.o
+[  6%] Building C object src/libscotch/CMakeFiles/scotch.dir/arch_build.c.o
+[  6%] Building C object src/libscotch/CMakeFiles/scotch.dir/arch.c.o
+[  6%] Linking C static library ../../lib/libptscotcherr.a
+[  6%] Built target ptscotcherr
+[  7%] Building C object src/libscotch/CMakeFiles/scotch.dir/arch_deco2.c.o
+[  7%] Building C object src/libscotch/CMakeFiles/scotch.dir/arch_hcub.c.o
+[  7%] Building C object src/libscotch/CMakeFiles/scotch.dir/arch_dist.c.o
+[  7%] Building C object src/libscotch/CMakeFiles/scotch.dir/arch_mesh.c.o
+[  7%] Building C object src/libscotch/CMakeFiles/scotch.dir/arch_tleaf.c.o
+[  7%] Building C object src/libscotch/CMakeFiles/scotch.dir/arch_sub.c.o
+[  8%] Building C object src/libscotch/CMakeFiles/scotch.dir/arch_torus.c.o
+[  8%] Building C object src/libscotch/CMakeFiles/scotch.dir/arch_vcmplt.c.o
+[  9%] Linking C static library ../../lib/libptscotcherrexit.a
+[  9%] Built target ptscotcherrexit
+[  9%] Building C object src/libscotch/CMakeFiles/scotch.dir/arch_vhcub.c.o
+[  9%] Building C object src/libscotch/CMakeFiles/scotch.dir/bgraph.c.o
+[  9%] Building C object src/libscotch/CMakeFiles/scotch.dir/bgraph_bipart_bd.c.o
+[  9%] Building C object src/libscotch/CMakeFiles/scotch.dir/bgraph_bipart_df.c.o
+[ 10%] Building C object src/libscotch/CMakeFiles/scotch.dir/bgraph_bipart_ex.c.o
+[ 10%] Building C object src/libscotch/CMakeFiles/scotch.dir/bgraph_bipart_fm.c.o
+[ 10%] Building C object src/libscotch/CMakeFiles/scotch.dir/bgraph_bipart_ga.c.o
+[ 10%] Building C object src/libscotch/CMakeFiles/scotch.dir/bgraph_bipart_gg.c.o
+[ 10%] Building C object src/libscotch/CMakeFiles/scotch.dir/bgraph_bipart_gp.c.o
+[ 11%] Building C object src/libscotch/CMakeFiles/scotch.dir/bgraph_bipart_ml.c.o
+[ 11%] Building C object src/libscotch/CMakeFiles/scotch.dir/bgraph_bipart_zr.c.o
+[ 11%] Building C object src/libscotch/CMakeFiles/scotch.dir/bgraph_bipart_st.c.o
+[ 11%] Building C object src/libscotch/CMakeFiles/scotch.dir/bgraph_cost.c.o
+[ 11%] Building C object src/libscotch/CMakeFiles/scotch.dir/bgraph_check.c.o
+[ 11%] Building C object src/libscotch/CMakeFiles/scotch.dir/bgraph_store.c.o
+[ 11%] Building C object src/libscotch/CMakeFiles/scotch.dir/common.c.o
+[ 11%] Building C object src/libscotch/CMakeFiles/scotch.dir/common_context.c.o
+[ 12%] Building C object src/libscotch/CMakeFiles/scotch.dir/common_error.c.o
+[ 12%] Building C object src/libscotch/CMakeFiles/scotch.dir/common_file.c.o
+[ 12%] Building C object src/libscotch/CMakeFiles/scotch.dir/common_file_compress.c.o
+[ 12%] Building C object src/libscotch/CMakeFiles/scotch.dir/common_file_decompress.c.o
+[ 12%] Building C object src/libscotch/CMakeFiles/scotch.dir/common_memory.c.o
+[ 12%] Building C object src/libscotch/CMakeFiles/scotch.dir/common_integer.c.o
+[ 13%] Building C object src/libscotch/CMakeFiles/scotch.dir/common_stub.c.o
+[ 13%] Building C object src/libscotch/CMakeFiles/scotch.dir/common_string.c.o
+[ 13%] Building C object src/libscotch/CMakeFiles/scotch.dir/common_thread.c.o
+[ 13%] Building C object src/libscotch/CMakeFiles/scotch.dir/common_thread_system.c.o
+[ 13%] Building C object src/libscotch/CMakeFiles/scotch.dir/common_timer.c.o
+[ 13%] Building C object src/libscotch/CMakeFiles/scotch.dir/common_values.c.o
+[ 14%] Building C object src/libscotch/CMakeFiles/scotch.dir/fibo.c.o
+[ 14%] Building C object src/libscotch/CMakeFiles/scotch.dir/context.c.o
+[ 14%] Building C object src/libscotch/CMakeFiles/scotch.dir/gain.c.o
+[ 14%] Building C object src/libscotch/CMakeFiles/scotch.dir/graph.c.o
+[ 14%] Building C object src/libscotch/CMakeFiles/scotch.dir/geom.c.o
+[ 14%] Building C object src/libscotch/CMakeFiles/scotch.dir/graph_band.c.o
+[ 15%] Building C object src/libscotch/CMakeFiles/scotch.dir/graph_clone.c.o
+[ 15%] Building C object src/libscotch/CMakeFiles/scotch.dir/graph_check.c.o
+[ 15%] Building C object src/libscotch/CMakeFiles/scotch.dir/graph_base.c.o
+[ 15%] Building C object src/libscotch/CMakeFiles/scotch.dir/graph_coarsen.c.o
+[ 15%] Building C object src/libscotch/CMakeFiles/scotch.dir/graph_diam.c.o
+[ 15%] Building C object src/libscotch/CMakeFiles/scotch.dir/graph_io.c.o
+[ 15%] Building C object src/libscotch/CMakeFiles/scotch.dir/graph_dump.c.o
+[ 15%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_induce.c.o
+[ 16%] Building C object src/libscotch/CMakeFiles/scotch.dir/graph_induce.c.o
+[ 16%] Building C object src/libscotch/CMakeFiles/scotch.dir/graph_ielo.c.o
+[ 16%] Building C object src/libscotch/CMakeFiles/scotch.dir/graph_io_chac.c.o
+[ 16%] Building C object src/libscotch/CMakeFiles/scotch.dir/graph_io_habo.c.o
+[ 17%] Building C object src/libscotch/CMakeFiles/scotch.dir/graph_match.c.o
+[ 17%] Building C object src/libscotch/CMakeFiles/scotch.dir/graph_io_mmkt.c.o
+[ 17%] Building C object src/libscotch/CMakeFiles/scotch.dir/graph_list.c.o
+[ 17%] Building C object src/libscotch/CMakeFiles/scotch.dir/graph_io_scot.c.o
+[ 17%] Building C object src/libscotch/CMakeFiles/scotch.dir/hall_order_hd.c.o
+[ 17%] Building C object src/libscotch/CMakeFiles/scotch.dir/hall_order_hf.c.o
+[ 18%] Building C object src/libscotch/CMakeFiles/scotch.dir/hall_order_hx.c.o
+[ 18%] Building C object src/libscotch/CMakeFiles/scotch.dir/hgraph.c.o
+[ 18%] Building C object src/libscotch/CMakeFiles/scotch.dir/hgraph_check.c.o
+[ 18%] Building C object src/libscotch/CMakeFiles/scotch.dir/hgraph_induce.c.o
+[ 18%] Building C object src/libscotch/CMakeFiles/scotch.dir/hgraph_order_bl.c.o
+[ 19%] Building C object src/libscotch/CMakeFiles/scotch.dir/hgraph_order_cp.c.o
+[ 19%] Building C object src/libscotch/CMakeFiles/scotch.dir/hgraph_order_hf.c.o
+[ 18%] Building C object src/libscotch/CMakeFiles/scotch.dir/hgraph_order_hd.c.o
+[ 19%] Building C object src/libscotch/CMakeFiles/scotch.dir/hgraph_order_cc.c.o
+[ 19%] Building C object src/libscotch/CMakeFiles/scotch.dir/hgraph_order_gp.c.o
+[ 19%] Building C object src/libscotch/CMakeFiles/scotch.dir/hgraph_order_hx.c.o
+[ 19%] Building C object src/libscotch/CMakeFiles/scotch.dir/hgraph_order_kp.c.o
+[ 19%] Building C object src/libscotch/CMakeFiles/scotch.dir/hgraph_order_nd.c.o
+[ 20%] Building C object src/libscotch/CMakeFiles/scotch.dir/hmesh.c.o
+[ 20%] Building C object src/libscotch/CMakeFiles/scotch.dir/hmesh_check.c.o
+[ 20%] Building C object src/libscotch/CMakeFiles/scotch.dir/hgraph_order_st.c.o
+[ 20%] Building C object src/libscotch/CMakeFiles/scotch.dir/hgraph_order_si.c.o
+[ 20%] Building C object src/libscotch/CMakeFiles/scotch.dir/hmesh_induce.c.o
+[ 20%] Building C object src/libscotch/CMakeFiles/scotch.dir/hmesh_hgraph.c.o
+[ 21%] Building C object src/libscotch/CMakeFiles/scotch.dir/hmesh_mesh.c.o
+[ 21%] Building C object src/libscotch/CMakeFiles/scotch.dir/hmesh_order_bl.c.o
+[ 21%] Building C object src/libscotch/CMakeFiles/scotch.dir/hmesh_order_cp.c.o
+[ 21%] Building C object src/libscotch/CMakeFiles/scotch.dir/hmesh_order_gp.c.o
+[ 21%] Building C object src/libscotch/CMakeFiles/scotch.dir/hmesh_order_gr.c.o
+[ 21%] Building C object src/libscotch/CMakeFiles/scotch.dir/hmesh_order_hd.c.o
+[ 21%] Building C object src/libscotch/CMakeFiles/scotch.dir/hmesh_order_hf.c.o
+[ 22%] Building C object src/libscotch/CMakeFiles/scotch.dir/hmesh_order_hx.c.o
+[ 22%] Building C object src/libscotch/CMakeFiles/scotch.dir/hmesh_order_nd.c.o
+[ 22%] Building C object src/libscotch/CMakeFiles/scotch.dir/hmesh_order_si.c.o
+[ 22%] Building C object src/libscotch/CMakeFiles/scotch.dir/hmesh_order_st.c.o
+[ 22%] Building C object src/libscotch/CMakeFiles/scotch.dir/kgraph.c.o
+[ 22%] Building C object src/libscotch/CMakeFiles/scotch.dir/kgraph_band.c.o
+[ 23%] Building C object src/libscotch/CMakeFiles/scotch.dir/kgraph_check.c.o
+[ 23%] Building C object src/libscotch/CMakeFiles/scotch.dir/kgraph_cost.c.o
+[ 23%] Building C object src/libscotch/CMakeFiles/scotch.dir/kgraph_map_bd.c.o
+[ 23%] Building C object src/libscotch/CMakeFiles/scotch.dir/kgraph_map_cp.c.o
+[ 23%] Building C object src/libscotch/CMakeFiles/scotch.dir/kgraph_map_ex.c.o
+[ 23%] Building C object src/libscotch/CMakeFiles/scotch.dir/kgraph_map_df.c.o
+[ 24%] Building C object src/libscotch/CMakeFiles/scotch.dir/kgraph_map_fm.c.o
+[ 24%] Building C object src/libscotch/CMakeFiles/scotch.dir/kgraph_map_rb.c.o
+[ 24%] Building C object src/libscotch/CMakeFiles/scotch.dir/kgraph_map_rb_part.c.o
+[ 24%] Building C object src/libscotch/CMakeFiles/scotch.dir/kgraph_map_ml.c.o
+[ 24%] Building C object src/libscotch/CMakeFiles/scotch.dir/kgraph_map_rb_map.c.o
+[ 24%] Building C object src/libscotch/CMakeFiles/scotch.dir/kgraph_map_st.c.o
+[ 25%] Building C object src/libscotch/CMakeFiles/scotch.dir/kgraph_store.c.o
+[ 25%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_arch.c.o
+[ 25%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_arch_build.c.o
+[ 25%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_arch_build_f.c.o
+[ 25%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_arch_dom.c.o
+[ 25%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_arch_dom_f.c.o
+[ 26%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_arch_f.c.o
+[ 26%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_common.c.o
+[ 26%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_common_f.c.o
+[ 26%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_context.c.o
+[ 26%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_context_graph.c.o
+[ 27%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_context_graph_f.c.o
+[ 27%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_context_f.c.o
+[ 27%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_geom.c.o
+[ 27%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_geom_f.c.o
+[ 27%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph.c.o
+[ 27%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_base.c.o
+[ 27%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_base_f.c.o
+[ 27%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_check.c.o
+[ 28%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_coarsen.c.o
+[ 28%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_check_f.c.o
+[ 28%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_coarsen_f.c.o
+[ 28%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_color.c.o
+[ 28%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_color_f.c.o
+[ 28%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_diam.c.o
+[ 29%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_f.c.o
+[ 29%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_diam_f.c.o
+[ 29%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_dump.c.o
+[ 29%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_io_chac_f.c.o
+[ 29%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_io_chac.c.o
+[ 29%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_io_habo.c.o
+[ 30%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_io_habo_f.c.o
+[ 30%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_io_mmkt.c.o
+[ 30%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_io_mmkt_f.c.o
+[ 30%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_io_scot.c.o
+[ 30%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_io_scot_f.c.o
+[ 30%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_map.c.o
+[ 31%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_map_f.c.o
+[ 31%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_map_io.c.o
+[ 31%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_map_io_f.c.o
+[ 31%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_map_view.c.o
+[ 31%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_map_view_f.c.o
+[ 31%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_order.c.o
+[ 31%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_order_f.c.o
+[ 32%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_part_ovl.c.o
+[ 32%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_graph_part_ovl_f.c.o
+[ 32%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_memory.c.o
+[ 32%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_mapping.c.o
+[ 32%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_mesh.c.o
+[ 32%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_mesh_f.c.o
+[ 33%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_mesh_graph.c.o
+[ 33%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_mesh_graph_f.c.o
+[ 33%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_mesh_io_habo.c.o
+[ 33%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_mesh_io_habo_f.c.o
+[ 33%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_mesh_io_scot.c.o
+[ 33%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_mesh_io_scot_f.c.o
+[ 34%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_mesh_order.c.o
+[ 34%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_mesh_order_f.c.o
+[ 34%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_parser.c.o
+[ 34%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_order.c.o
+[ 34%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_parser_f.c.o
+[ 34%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_random.c.o
+[ 35%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_random_f.c.o
+[ 35%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_strat.c.o
+[ 35%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_version_f.c.o
+[ 35%] Building C object src/libscotch/CMakeFiles/scotch.dir/library_version.c.o
+[ 35%] Building C object src/libscotch/CMakeFiles/scotch.dir/mapping.c.o
+[ 35%] Building C object src/libscotch/CMakeFiles/scotch.dir/mapping_check.c.o
+[ 36%] Building C object src/libscotch/CMakeFiles/scotch.dir/mapping_io.c.o
+[ 36%] Building C object src/libscotch/CMakeFiles/scotch.dir/mesh.c.o
+[ 36%] Building C object src/libscotch/CMakeFiles/scotch.dir/mesh_check.c.o
+[ 36%] Building C object src/libscotch/CMakeFiles/scotch.dir/mesh_coarsen.c.o
+[ 36%] Building C object src/libscotch/CMakeFiles/scotch.dir/mesh_graph.c.o
+[ 36%] Building C object src/libscotch/CMakeFiles/scotch.dir/mesh_induce_sepa.c.o
+[ 36%] Building C object src/libscotch/CMakeFiles/scotch.dir/mesh_io.c.o
+[ 36%] Building C object src/libscotch/CMakeFiles/scotch.dir/mesh_io_scot.c.o
+[ 37%] Building C object src/libscotch/CMakeFiles/scotch.dir/mesh_io_habo.c.o
+[ 37%] Building C object src/libscotch/CMakeFiles/scotch.dir/order.c.o
+[ 37%] Building C object src/libscotch/CMakeFiles/scotch.dir/order_check.c.o
+[ 37%] Building C object src/libscotch/CMakeFiles/scotch.dir/order_io.c.o
+[ 37%] Building C object src/libscotch/CMakeFiles/scotch.dir/parser.c.o
+[ 38%] Building C object src/libscotch/CMakeFiles/scotch.dir/parser_ll.c.o
+[ 38%] Building C object src/libscotch/CMakeFiles/scotch.dir/parser_yy.c.o
+[ 38%] Building C object src/libscotch/CMakeFiles/scotch.dir/vgraph.c.o
+[ 38%] Building C object src/libscotch/CMakeFiles/scotch.dir/vgraph_check.c.o
+[ 38%] Building C object src/libscotch/CMakeFiles/scotch.dir/vgraph_separate_bd.c.o
+[ 38%] Building C object src/libscotch/CMakeFiles/scotch.dir/vgraph_separate_df.c.o
+[ 39%] Building C object src/libscotch/CMakeFiles/scotch.dir/vgraph_separate_es.c.o
+[ 39%] Building C object src/libscotch/CMakeFiles/scotch.dir/vgraph_separate_fm.c.o
+[ 39%] Building C object src/libscotch/CMakeFiles/scotch.dir/vgraph_separate_gg.c.o
+[ 39%] Building C object src/libscotch/CMakeFiles/scotch.dir/vgraph_separate_gp.c.o
+[ 39%] Building C object src/libscotch/CMakeFiles/scotch.dir/vgraph_separate_ml.c.o
+[ 40%] Building C object src/libscotch/CMakeFiles/scotch.dir/vgraph_separate_st.c.o
+[ 40%] Building C object src/libscotch/CMakeFiles/scotch.dir/vgraph_separate_th.c.o
+[ 40%] Building C object src/libscotch/CMakeFiles/scotch.dir/vgraph_separate_vw.c.o
+[ 40%] Building C object src/libscotch/CMakeFiles/scotch.dir/vgraph_separate_zr.c.o
+[ 40%] Building C object src/libscotch/CMakeFiles/scotch.dir/vmesh.c.o
+[ 40%] Building C object src/libscotch/CMakeFiles/scotch.dir/vgraph_store.c.o
+[ 40%] Building C object src/libscotch/CMakeFiles/scotch.dir/vmesh_check.c.o
+[ 41%] Building C object src/libscotch/CMakeFiles/scotch.dir/vmesh_separate_fm.c.o
+[ 41%] Building C object src/libscotch/CMakeFiles/scotch.dir/vmesh_separate_gg.c.o
+[ 41%] Building C object src/libscotch/CMakeFiles/scotch.dir/vmesh_separate_gr.c.o
+[ 41%] Building C object src/libscotch/CMakeFiles/scotch.dir/vmesh_separate_ml.c.o
+[ 41%] Building C object src/libscotch/CMakeFiles/scotch.dir/vmesh_separate_st.c.o
+[ 41%] Building C object src/libscotch/CMakeFiles/scotch.dir/vmesh_separate_zr.c.o
+[ 41%] Building C object src/libscotch/CMakeFiles/scotch.dir/vmesh_store.c.o
+[ 42%] Building C object src/libscotch/CMakeFiles/scotch.dir/wgraph.c.o
+[ 42%] Building C object src/libscotch/CMakeFiles/scotch.dir/wgraph_check.c.o
+[ 42%] Building C object src/libscotch/CMakeFiles/scotch.dir/wgraph_part_fm.c.o
+[ 42%] Building C object src/libscotch/CMakeFiles/scotch.dir/wgraph_part_es.c.o
+[ 42%] Building C object src/libscotch/CMakeFiles/scotch.dir/wgraph_part_rb.c.o
+[ 42%] Building C object src/libscotch/CMakeFiles/scotch.dir/wgraph_part_ml.c.o
+[ 43%] Building C object src/libscotch/CMakeFiles/scotch.dir/wgraph_part_st.c.o
+[ 43%] Building C object src/libscotch/CMakeFiles/scotch.dir/wgraph_part_zr.c.o
+[ 43%] Building C object src/libscotch/CMakeFiles/scotch.dir/wgraph_store.c.o
+[ 43%] Linking C static library ../../lib/libscotch.a
+[ 43%] Built target scotch
+[ 44%] Building C object src/scotch/CMakeFiles/acpl.dir/acpl.c.o
+[ 44%] Building C object src/scotch/CMakeFiles/amk_fft2.dir/amk_fft2.c.o
+[ 44%] Building C object src/scotch/CMakeFiles/amk_ccc.dir/amk_ccc.c.o
+[ 44%] Building C object src/scotch/CMakeFiles/amk_p2.dir/amk_p2.c.o
+[ 44%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/arch_mpi.c.o
+[ 44%] Building C object src/scotch/CMakeFiles/amk_hy.dir/amk_hy.c.o
+[ 44%] Building C object src/scotch/CMakeFiles/amk_grf.dir/amk_grf.c.o
+[ 45%] Building C object src/scotch/CMakeFiles/amk_m2.dir/amk_m2.c.o
+[ 45%] Linking C executable ../../bin/acpl
+[ 45%] Linking C executable ../../bin/amk_p2
+[ 45%] Linking C executable ../../bin/amk_fft2
+[ 45%] Linking C executable ../../bin/amk_ccc
+[ 45%] Linking C executable ../../bin/amk_hy
+[ 45%] Linking C executable ../../bin/amk_grf
+[ 45%] Linking C executable ../../bin/amk_m2
+[ 45%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/arch_cmplt_mpi.c.o
+[ 45%] Built target amk_p2
+[ 45%] Built target acpl
+[ 45%] Built target amk_fft2
+[ 45%] Built target amk_ccc
+[ 45%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/arch_cmpltw_mpi.c.o
+[ 45%] Built target amk_hy
+[ 46%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/arch_deco_mpi.c.o
+[ 46%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/arch_deco2_mpi.c.o
+[ 46%] Building C object src/scotch/CMakeFiles/atst.dir/atst.c.o
+/opt/rh/devtoolset-9/root/usr/libexec/gcc/ppc64le-redhat-linux/9/ld: ../../lib/libscotch.a(parser_yy.c.o): in function `_SCOTCHyyparse':
+parser_yy.c:(.text+0x420): undefined reference to `_SCOTCHyylex'
+[ 46%] Building C object src/scotch/CMakeFiles/gbase.dir/gbase.c.o
+[ 46%] Built target amk_m2
+collect2: error: ld returned 1 exit status
+make[2]: *** [src/scotch/CMakeFiles/amk_grf.dir/build.make:100: bin/amk_grf] Error 1
+make[1]: *** [CMakeFiles/Makefile2:820: src/scotch/CMakeFiles/amk_grf.dir/all] Error 2
+make[1]: *** Waiting for unfinished jobs....
+[ 46%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/arch_dist_mpi.c.o
+[ 46%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/arch_hcub_mpi.c.o
+[ 46%] Linking C executable ../../bin/gbase
+[ 46%] Linking C executable ../../bin/atst
+[ 46%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/arch_mesh_mpi.c.o
+[ 46%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/arch_sub_mpi.c.o
+[ 46%] Built target gbase
+[ 46%] Built target atst
+[ 46%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/arch_tleaf_mpi.c.o
+[ 47%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/arch_vcmplt_mpi.c.o
+[ 47%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/arch_vhcub_mpi.c.o
+[ 47%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/bdgraph_bipart_bd.c.o
+[ 47%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/bdgraph.c.o
+[ 47%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/bdgraph_bipart_df.c.o
+[ 47%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/bdgraph_bipart_ex.c.o
+[ 48%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/bdgraph_bipart_ml.c.o
+[ 48%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/bdgraph_bipart_sq.c.o
+[ 48%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/bdgraph_bipart_st.c.o
+[ 48%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/bdgraph_bipart_zr.c.o
+[ 48%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/bdgraph_check.c.o
+[ 48%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/bdgraph_gather_all.c.o
+[ 49%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/bdgraph_store.c.o
+[ 49%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/comm.c.o
+[ 49%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_allreduce.c.o
+[ 49%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_band.c.o
+[ 49%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph.c.o
+[ 49%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_build.c.o
+[ 50%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_check.c.o
+[ 50%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_build_hcub.c.o
+[ 50%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_build_grid3d.c.o
+[ 50%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_coarsen.c.o
+[ 50%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_compact.c.o
+[ 50%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_fold.c.o
+[ 51%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_fold_comm.c.o
+[ 51%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_fold_dup.c.o
+[ 51%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_gather.c.o
+[ 51%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_gather_all.c.o
+[ 51%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_ghst.c.o
+[ 51%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_halo.c.o
+[ 51%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_induce.c.o
+[ 52%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_io_load.c.o
+[ 52%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_io_save.c.o
+[ 52%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_match.c.o
+[ 52%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_match_check.c.o
+[ 52%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_match_sync_coll.c.o
+[ 52%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_match_sync_ptop.c.o
+[ 53%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_redist.c.o
+[ 53%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_scatter.c.o
+[ 53%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dgraph_view.c.o
+[ 53%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dmapping.c.o
+[ 53%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dmapping_io.c.o
+[ 53%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dmesh.c.o
+[ 54%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dmesh_build_adm.c.o
+[ 54%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dmesh_dgraph.c.o
+[ 54%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dmesh_io_load.c.o
+[ 54%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dorder.c.o
+[ 54%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dorder_gather.c.o
+[ 54%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dorder_io.c.o
+[ 55%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dorder_io_block.c.o
+[ 55%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dorder_io_tree.c.o
+[ 55%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dorder_perm.c.o
+[ 55%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/dorder_tree_dist.c.o
+[ 55%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/hdgraph.c.o
+[ 55%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/hdgraph_check.c.o
+[ 56%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/hdgraph_fold.c.o
+[ 56%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/hdgraph_gather.c.o
+[ 56%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/hdgraph_induce.c.o
+[ 56%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/hdgraph_order_nd.c.o
+[ 56%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/hdgraph_order_si.c.o
+[ 56%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/hdgraph_order_sq.c.o
+[ 56%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/hdgraph_order_st.c.o
+[ 57%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/kdgraph.c.o
+[ 57%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/kdgraph_gather.c.o
+[ 57%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/kdgraph_map_rb.c.o
+[ 57%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/kdgraph_map_rb_map.c.o
+[ 57%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/kdgraph_map_rb_part.c.o
+[ 57%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/kdgraph_map_st.c.o
+[ 58%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_context_dgraph.c.o
+[ 58%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_context_dgraph_f.c.o
+[ 58%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph.c.o
+[ 58%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_band.c.o
+[ 58%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_band_f.c.o
+[ 58%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_build.c.o
+[ 59%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_build_grid3d.c.o
+[ 59%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_build_f.c.o
+[ 59%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_build_grid3d_f.c.o
+[ 59%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_check.c.o
+[ 59%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_check_f.c.o
+[ 59%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_coarsen.c.o
+[ 60%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_coarsen_f.c.o
+[ 60%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_f.c.o
+[ 60%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_gather.c.o
+[ 60%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_gather_f.c.o
+[ 60%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_grow.c.o
+[ 60%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_halo.c.o
+[ 61%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_induce.c.o
+[ 61%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_halo_f.c.o
+[ 61%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_induce_f.c.o
+[ 61%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_io_load.c.o
+[ 61%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_io_load_f.c.o
+[ 61%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_io_save.c.o
+[ 62%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_io_save_f.c.o
+[ 62%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_map.c.o
+[ 62%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_map_f.c.o
+[ 62%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_map_stat.c.o
+[ 62%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_map_stat_f.c.o
+[ 62%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_map_view.c.o
+[ 62%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_map_view_f.c.o
+[ 63%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_order.c.o
+[ 63%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_order_f.c.o
+[ 63%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_order_gather.c.o
+[ 63%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_order_gather_f.c.o
+[ 63%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_order_io.c.o
+[ 63%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_order_io_block.c.o
+[ 64%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_order_io_block_f.c.o
+[ 64%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_order_io_f.c.o
+[ 64%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_order_perm.c.o
+[ 64%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_order_perm_f.c.o
+[ 64%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_order_tree_dist.c.o
+[ 64%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_order_tree_dist_f.c.o
+[ 65%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_redist.c.o
+[ 65%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_scatter_f.c.o
+[ 65%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_redist_f.c.o
+[ 65%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_scatter.c.o
+[ 65%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_stat.c.o
+[ 65%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dgraph_stat_f.c.o
+[ 66%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dmapping.c.o
+[ 66%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dmesh.c.o
+[ 66%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dmesh_f.c.o
+[ 66%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dmesh_build_adm.c.o
+[ 66%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dmesh_build_adm_f.c.o
+[ 66%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dmesh_dgraph.c.o
+[ 66%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dmesh_dgraph_f.c.o
+[ 67%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dmesh_io_load.c.o
+[ 67%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dmesh_io_load_f.c.o
+[ 67%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/library_dorder.c.o
+[ 67%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/vdgraph.c.o
+[ 67%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/vdgraph_check.c.o
+[ 67%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/vdgraph_gather_all.c.o
+[ 68%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/vdgraph_separate_df.c.o
+[ 68%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/vdgraph_separate_bd.c.o
+[ 68%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/vdgraph_separate_ml.c.o
+[ 68%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/vdgraph_separate_sq.c.o
+[ 68%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/vdgraph_separate_st.c.o
+[ 68%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/vdgraph_separate_zr.c.o
+[ 69%] Building C object src/libscotch/CMakeFiles/ptscotch.dir/vdgraph_store.c.o
+[ 69%] Linking C static library ../../lib/libptscotch.a
+[ 69%] Built target ptscotch
+make: *** [Makefile:146: all] Error 2
