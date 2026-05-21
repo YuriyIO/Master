@@ -44,9 +44,10 @@ public:
 
     void run(Type type, const CSR& csr);
 
-    static std::string getPartitionName(Type partitionType);
-    std::string getPartitionStats(Type partitionType) const;
-    std::string getPartitionPostfix(Type partitionType) const;
+    std::string getPartitionInfo() const;
+    std::string getPartitionName() const;
+    std::string getPartitionStats() const;
+    std::string getPartitionPostfix() const;
 
 private:
     void run_parmetis(const CSR& csr);

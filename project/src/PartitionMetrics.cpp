@@ -450,7 +450,7 @@ std::string PartitionMetrics::getFileName(const std::string& filename) {
 
 void PartitionMetrics::saveMetricsToFile(const Partition& partition, const int cutEdge, const int rank, const std::string filename) {
     if (rank == 0) {
-        std::string outfile = outputFolder + "/" + getFileName(filename) + "_" + Partition::getPartitionName(partition.type) 
+        std::string outfile = outputFolder + "/" + getFileName(filename) + "_" + partition.getPartitionName() 
                                             + "_p" + std::to_string(partition.nparts) + "_" + partition.postfix + "_info";
         std::ofstream f(outfile);
         if (!f.is_open()) {
@@ -500,7 +500,7 @@ void PartitionMetrics::saveMetricsToFile(const Partition& partition, const int c
         }
 
         f << "======================================================================" << std::endl;
-        f << " PARTITION REPORT: " << Partition::getPartitionName(partition.type) << std::endl;
+        f << " PARTITION REPORT: " << partition.getPartitionInfo() << std::endl;
         f << "======================================================================" << std::endl;
         f << "File:             " << filename << std::endl;
         f << "Seed:             " << partition.seed << std::endl;
@@ -557,7 +557,6 @@ void PartitionMetrics::save_graph_topology(const CSR& csr) {
     std::string filename = vizFolder + "/" + getFileName(csr.filename) + "_topology.csv";
     std::stringstream ss;
 
-    // 1. Каждый процесс готовит свою часть строк в буфер
     for (int i = 0; i < csr.local_rows; i++) {
         int u = csr.start_row + i;
         for (int j = csr.rows[i]; j < csr.rows[i+1]; j++) {
@@ -571,28 +570,23 @@ void PartitionMetrics::save_graph_topology(const CSR& csr) {
     long long local_size = local_str.size();
     long long offset = 0;
 
-    // 2. Вычисляем смещения (префиксная сумма длин буферов)
     MPI_Exscan(&local_size, &offset, 1, MPI_LONG_LONG, MPI_SUM, MPI_COMM_WORLD);
     if (csr.rank == 0) offset = 0;
 
-    // Добавляем длину заголовка к смещению каждого процесса
     std::string header = "source,target\n";
     long long header_len = header.size();
     offset += header_len;
 
-    // 3. Параллельная запись через MPI-IO
     MPI_File fh;
     MPI_File_open(MPI_COMM_WORLD, filename.c_str(), 
                   MPI_MODE_CREATE | MPI_MODE_WRONLY, MPI_INFO_NULL, &fh);
 
     MPI_File_set_size(fh, 0); 
 
-    // Только Rank 0 пишет заголовок в самое начало
     if (csr.rank == 0) {
         MPI_File_write_at(fh, 0, header.c_str(), header_len, MPI_CHAR, MPI_STATUS_IGNORE);
     }
 
-    // Все пишут свои куски по вычисленным смещениям
     MPI_File_write_at_all(fh, offset, local_str.c_str(), local_size, MPI_CHAR, MPI_STATUS_IGNORE);
 
     MPI_File_close(&fh);
@@ -600,7 +594,7 @@ void PartitionMetrics::save_graph_topology(const CSR& csr) {
 
 void PartitionMetrics::save_partition_vec(const Partition& partition, const CSR& csr) {
     std::string filename = vizFolder + "/" + getFileName(csr.filename) + "_" 
-                         + Partition::getPartitionName(partition.type) + "_p" 
+                         + partition.getPartitionName() + "_p" 
                          + std::to_string(partition.nparts) + "_" + partition.postfix + "_map.csv";
     
     std::stringstream ss;
@@ -612,7 +606,6 @@ void PartitionMetrics::save_partition_vec(const Partition& partition, const CSR&
     long long local_size = local_str.size();
     long long offset = 0;
 
-    // Префиксная сумма для определения позиций
     MPI_Exscan(&local_size, &offset, 1, MPI_LONG_LONG, MPI_SUM, MPI_COMM_WORLD);
     if (csr.rank == 0) offset = 0;
 

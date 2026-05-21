@@ -7,11 +7,23 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Находим MPI
 find_package(MPI REQUIRED)
 
-# Находим KaMinPar
-set(KaMinPar_DIR "/mnt/c/Programs/C/VS_Code/local_libs/KaMinPar/lib/cmake/KaMinPar")
+# --- Настройка путей ---
+set(KAMINPAR_PREFIX "/mnt/c/Programs/C/VS_Code/local_libs/KaMinPar")
+
+# Указываем CMake, где искать конфигурационные файлы TBB и KaMinPar
+# Используем ваш симлинк 'lib' (или lib64, если симлинк не сработает)
+set(TBB_DIR "${KAMINPAR_PREFIX}/lib/cmake/TBB")
+set(KaMinPar_DIR "${KAMINPAR_PREFIX}/lib/cmake/KaMinPar")
+
+# Также добавим корень установки в список поиска префиксов
+list(APPEND CMAKE_PREFIX_PATH "${KAMINPAR_PREFIX}")
+list(APPEND CMAKE_PREFIX_PATH "/mnt/c/Programs/C/VS_Code/local_libs/sparsehash")
+
+# Теперь находим пакеты
+find_package(TBB REQUIRED)
 find_package(KaMinPar REQUIRED)
 
-# --- СПИСОК ИСХОДНЫХ ФАЙЛОВ (теперь их много) ---
+# --- СПИСОК ИСХОДНЫХ ФАЙЛОВ ---
 set(SOURCE_FILES 
     main.cpp 
     CSR.cpp 

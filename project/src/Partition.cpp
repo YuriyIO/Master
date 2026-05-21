@@ -31,12 +31,12 @@ void Partition::run(Type type, const CSR& csr) {
     ret = 0;
     this->type = type; 
     cutEdge = -1;
-    postfix = getPartitionPostfix(type);
+    postfix = getPartitionPostfix();
     std::fill(partition.begin(), partition.end(), 0);
 
     if (csr.rank == 0) {
-        std::cout << "=== Starting " << getPartitionName(type) << " Partitioning ===" << std::endl;
-        std::cout << getPartitionStats(type) << std::endl;
+        std::cout << "=== Starting " << getPartitionName() << " Partitioning ===" << std::endl;
+        std::cout << getPartitionStats() << std::endl;
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
@@ -62,7 +62,7 @@ void Partition::run(Type type, const CSR& csr) {
     else if(type == Type::SCOTCH && ret != 0)
         std::cerr << "SCOTCH returned error code " << ret << "; rank: " << csr.rank << std::endl;
     else if(csr.rank == 0)
-        std::cout << getPartitionName(type) << " completed successfully!" << std::endl;
+        std::cout << getPartitionName() << " completed successfully!" << std::endl;
 }
 
 void Partition::run_parmetis(const CSR& csr) {  
@@ -193,6 +193,11 @@ void Partition::run_zoltan2_sphynx(const CSR& csr) {
     sP->set("sphynx_preconditioner_type", sphynx_preconditioner_type);
     sP->set("sphynx_tolerance", 1.0 / std::pow(10.0, sphynx_tolerance_pow));
 
+    if (suppress_output) {
+        params.set("debug_level", "no_status");
+        sP->set("sphynx_verbosity", 0); 
+    }
+
     Zoltan2::SphynxProblem<adapter_t> problem(&adapter, &params, sP);
 
     MPI_Barrier(MPI_COMM_WORLD);
@@ -267,20 +272,32 @@ void Partition::run_zoltan_phg(const CSR& csr) {
     for (size_t i = 0; i < (size_t)csr.local_rows; ++i) partition[i] = (int)(pLV[i]);
 }
 
-std::string Partition::getPartitionName(Type partitionType) {
-    switch (partitionType) {
+std::string Partition::getPartitionInfo() const{
+    switch (type) {
+        case Type::KAHIP:      return "ParHIP " + kahip_strat_name;
+        case Type::KAMINPAR:   return "dKaMinPar " + kaminpar_strat_name;
+        case Type::PARMETIS:   return "ParMETIS";
+        case Type::SCOTCH:     return "PT-SCOTCH " + ptscotch_strat_name;
+        case Type::ZOLTAN2_SPHYNX: return "Zoltan2 " + sphynx_problem_type + " " + sphynx_preconditioner_type + " " + std::to_string(sphynx_tolerance_pow);
+        case Type::ZOLTAN_PHG: return "Zoltan";
+    }
+    return "UNKNOWN"; 
+}
+
+std::string Partition::getPartitionName() const{
+    switch (type) {
         case Type::KAHIP:      return "KaHIP";
         case Type::KAMINPAR:   return "KaMinPar";
         case Type::PARMETIS:   return "ParMETIS";
         case Type::SCOTCH:     return "SCOTCH";
-        case Type::ZOLTAN2_SPHYNX: return "Zoltan2_Sphynx";
-        case Type::ZOLTAN_PHG: return "Zoltan_PHG";
+        case Type::ZOLTAN2_SPHYNX: return "Zoltan2";
+        case Type::ZOLTAN_PHG: return "Zoltan";
     }
-    return "UNKNOWN";
+    return "UNKNOWN"; 
 }
 
-std::string Partition::getPartitionStats(Type partitionType) const {
-    switch (partitionType) {
+std::string Partition::getPartitionStats() const {
+    switch (type) {
         case Type::KAHIP:           return "kahip_strat_name: " + kahip_strat_name;
         case Type::KAMINPAR:        return "kaminpar_strat_name: " + kaminpar_strat_name;
         case Type::PARMETIS:        return "ParMETIS strat: default";
@@ -293,9 +310,9 @@ std::string Partition::getPartitionStats(Type partitionType) const {
     return "UNKNOWN";
 }
 
-std::string Partition::getPartitionPostfix(Type partitionType) const {
+std::string Partition::getPartitionPostfix() const {
     int imbalancePercent = (int) (imbalance * 100);
-    switch (partitionType) {
+    switch (type) {
         case Type::KAHIP:           return kahip_strat_name + "_imbalance_" + std::to_string(imbalancePercent);
         case Type::KAMINPAR:        return kaminpar_strat_name + "_imbalance_" + std::to_string(imbalancePercent);
         case Type::PARMETIS:        return "imbalance_" + std::to_string(imbalancePercent);

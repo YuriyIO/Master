@@ -106,48 +106,47 @@ void start_partitions(const CSR& csr, PartitionMetrics& partitionMetrics, const 
         }
     }
 
+    partition.phg_strat_name = "default";
+    partition.run(Partition::Type::ZOLTAN_PHG, csr);
+    partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
+    if(graph_viz) {
+        partitionMetrics.save_partition_vec(partition, csr);
+    }
+    if (csr.rank == 0) {
+        std::cout << std::endl;
+    }
 
-    std::vector<std::string> sphynx_types = {"combinatorial", "generalized", "normalized"};/*{"combinatorial", "generalized", "normalized"};*/
+
+    std::vector<std::string> sphynx_types = {"combinatorial", "generalized"};/*{"combinatorial", "generalized", "normalized"};*/
     std::vector<std::string> sphynx_preconds = {"muelu", "jacobi", "polynomial"};/*{"muelu", "jacobi", "polynomial"};*/
     std::vector<int> tolerances = {4, 6, 8}; /*{4, 6, 8};*/
     std::string sphynx_types_default = "combinatorial";
     std::string sphynx_preconds_default = "muelu";
     int tolerances_default = 6;
 
+    partition.sphynx_tolerance_pow = tolerances_default;
     for (const auto& type : sphynx_types) {
-        partition.sphynx_problem_type = type;
-        partition.sphynx_preconditioner_type = sphynx_preconds_default;
-        partition.sphynx_tolerance_pow = tolerances_default;
+        for (const auto& prec : sphynx_preconds) {
+            partition.sphynx_problem_type = type;
+            partition.sphynx_preconditioner_type = prec;
+            partition.run(Partition::Type::ZOLTAN2_SPHYNX, csr);
+            partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
+            if(graph_viz) {
+                partitionMetrics.save_partition_vec(partition, csr);
+            }
+            if (csr.rank == 0) {
+                std::cout << std::endl;
+            }
 
-        partition.run(Partition::Type::ZOLTAN2_SPHYNX, csr);
-        partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
-        if(graph_viz) {
-            partitionMetrics.save_partition_vec(partition, csr);
-        }
-        if (csr.rank == 0) {
-            std::cout << std::endl;
-        }
-    }
-
-    for (const auto& prec : sphynx_preconds) {
-        partition.sphynx_problem_type = sphynx_types_default;
-        partition.sphynx_preconditioner_type = prec;
-        partition.sphynx_tolerance_pow = tolerances_default;
-
-        partition.run(Partition::Type::ZOLTAN2_SPHYNX, csr);
-        partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
-        if(graph_viz) {
-            partitionMetrics.save_partition_vec(partition, csr);
-        }
-        if (csr.rank == 0) {
-            std::cout << std::endl;
         }
 
     }
 
+    partition.sphynx_problem_type = sphynx_types_default;
+    partition.sphynx_preconditioner_type = sphynx_preconds_default;
     for (int tol : tolerances) {
-        partition.sphynx_problem_type = sphynx_types_default;
-        partition.sphynx_preconditioner_type = sphynx_preconds_default;
+        if(tol == tolerances_default)
+            continue;
         partition.sphynx_tolerance_pow = tol;
 
         partition.run(Partition::Type::ZOLTAN2_SPHYNX, csr);
@@ -160,18 +159,10 @@ void start_partitions(const CSR& csr, PartitionMetrics& partitionMetrics, const 
         }
     }
 
-    std::vector<std::string> phg_strats_name = {"default", "strong"};
-    for (const auto& strat : phg_strats_name) {
-        partition.phg_strat_name = strat;
-        partition.run(Partition::Type::ZOLTAN_PHG, csr);
-        partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
-        if(graph_viz) {
-            partitionMetrics.save_partition_vec(partition, csr);
-        }
-        if (csr.rank == 0) {
-            std::cout << std::endl;
-        }
+    if (csr.rank == 0) {
+        std::cout << "Program completed successfully" <<std::endl;
     }
+
 }
 
 int main(int argc, char* argv[]) {
