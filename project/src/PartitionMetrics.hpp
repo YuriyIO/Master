@@ -8,10 +8,7 @@
 
 class PartitionMetrics {
 public:
-    const std::string outputFolder;
-    const std::string vizFolder;
-
-    std::vector<int> ghost_global_ids;
+    std::vector<int> ghost_global_ids; 
     std::vector<int> ghost_part_ids;
 
     std::vector<int> verticesCounter;
@@ -23,11 +20,11 @@ public:
 
     std::vector<std::vector<int>> neighbours;
 
-    PartitionMetrics(const std::string outputFolder, const std::string vizFolder);
+    PartitionMetrics();
 
     void save_partition_info(const Partition& partition, const int actualParts, const CSR& csr);
 
-    void save_graph_topology(const CSR& csr);
+    void save_graph_topology(const Partition& partition, const CSR& csr);
     void save_partition_vec(const Partition& partition, const CSR& csr);
 
 private:
@@ -48,7 +45,6 @@ private:
     int findOwnerRank(const int v, const std::vector<int>& vtxdist);
     int getPartitionOfVertex(int v, const CSR& csr, const std::vector<int>& partition);
     void exchange_ghost_parts(const std::vector<int>& partition, const int actualParts, const CSR& csr);
-    void exchange_ghost_parts2(const std::vector<int>& partition, const int actualParts, const CSR& csr);
     void computeVertexImbalance(const std::vector<int>& partition, const int actualParts);
     void computeEdgeImbalance(const std::vector<int>& partition, const int actualParts, const CSR& csr);
     void computeBoundaryVertices(const std::vector<int>& partition, const int actualParts, const CSR& csr);

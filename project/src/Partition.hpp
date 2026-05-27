@@ -16,6 +16,9 @@ public:
         ZOLTAN_PHG
     };
 
+    const std::string graphName;
+    const std::string outputFolder;
+    const std::string vizFolder;
     const int nparts;
     int actualParts;
     const double imbalance;   
@@ -35,19 +38,20 @@ public:
     int sphynx_tolerance_pow;
     std::string phg_strat_name;
 
-    std::string postfix;
-
     double time_total;
     double time_solve;
 
-    Partition(const int nparts, const double imbalance, const bool suppress_output,const int local_rows);
+    Partition(const std::string graphName, const std::string outputFolder, const std::string vizFolder, const int nparts, const double imbalance, const bool suppress_output,const int local_rows);
 
-    void run(Type type, const CSR& csr);
+    void run(const CSR& csr);
 
     std::string getPartitionInfo() const;
     std::string getPartitionName() const;
     std::string getPartitionStats() const;
     std::string getPartitionPostfix() const;
+    std::string getReportPath() const;
+    std::string getVizReportPath() const;
+    std::string getVizTopologyPath() const;
 
 private:
     void run_parmetis(const CSR& csr);

@@ -17,7 +17,10 @@
 #include <Zoltan2_PartitioningProblem.hpp>
 
 
-Partition::Partition(const int nparts, const double imbalance, const bool suppress_output, const int local_rows) : 
+Partition::Partition(const std::string graphName, const std::string outputFolder, const std::string vizFolder, const int nparts, const double imbalance, const bool suppress_output, const int local_rows) : 
+    graphName(graphName),
+    outputFolder(outputFolder),
+    vizFolder(vizFolder),
     nparts(nparts), 
     imbalance(imbalance), 
     suppress_output(suppress_output),
@@ -25,13 +28,23 @@ Partition::Partition(const int nparts, const double imbalance, const bool suppre
     partition.resize(local_rows);
 }
 
-void Partition::run(Type type, const CSR& csr) {
+std::string Partition::getReportPath() const {
+    return outputFolder + "/" + graphName + "_" + getPartitionName() + "_p" + std::to_string(nparts) + "_" + getPartitionPostfix() + "_info";
+}
+
+std::string Partition::getVizReportPath() const {
+    return vizFolder + "/" + graphName + "_" + getPartitionName() + "_p" + std::to_string(nparts) + "_" + getPartitionPostfix() + "_map.csv";
+}
+
+std::string Partition::getVizTopologyPath() const {
+    return vizFolder + "/" + graphName + "_topology.csv";
+}
+
+void Partition::run(const CSR& csr) {
     actualParts = nparts;
     actualImbalance = imbalance;
     ret = 0;
-    this->type = type; 
     cutEdge = -1;
-    postfix = getPartitionPostfix();
     std::fill(partition.begin(), partition.end(), 0);
 
     if (csr.rank == 0) {

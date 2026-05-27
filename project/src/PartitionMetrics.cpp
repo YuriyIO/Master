@@ -12,7 +12,7 @@
 #include <map>
 #include <set>
 
-PartitionMetrics::PartitionMetrics(const std::string outputFolder, const std::string vizFolder) : outputFolder(outputFolder), vizFolder(vizFolder) {
+PartitionMetrics::PartitionMetrics() {
 }
 
 void PartitionMetrics::save_partition_info(const Partition& partition, const int actualParts, const CSR& csr) {
@@ -442,7 +442,7 @@ void PartitionMetrics::computeConnectedComponents(const std::vector<int>& partit
         }
     }
 }
-
+ 
 std::string PartitionMetrics::getFileName(const std::string& filename) {
     std::filesystem::path p(filename);
     return p.stem().string();
@@ -450,8 +450,8 @@ std::string PartitionMetrics::getFileName(const std::string& filename) {
 
 void PartitionMetrics::saveMetricsToFile(const Partition& partition, const int cutEdge, const int rank, const std::string filename) {
     if (rank == 0) {
-        std::string outfile = outputFolder + "/" + getFileName(filename) + "_" + partition.getPartitionName() 
-                                            + "_p" + std::to_string(partition.nparts) + "_" + partition.postfix + "_info";
+        std::string outfile = partition.getReportPath();
+
         std::ofstream f(outfile);
         if (!f.is_open()) {
             std::cout << "ERROR: Failed to open file for writing: " << outfile << std::endl;
@@ -553,8 +553,8 @@ void PartitionMetrics::saveMetricsToFile(const Partition& partition, const int c
     }
 }
 
-void PartitionMetrics::save_graph_topology(const CSR& csr) {
-    std::string filename = vizFolder + "/" + getFileName(csr.filename) + "_topology.csv";
+void PartitionMetrics::save_graph_topology(const Partition& partition, const CSR& csr) {
+    std::string filename = partition.getVizTopologyPath();
     std::stringstream ss;
 
     for (int i = 0; i < csr.local_rows; i++) {
@@ -593,9 +593,7 @@ void PartitionMetrics::save_graph_topology(const CSR& csr) {
 }
 
 void PartitionMetrics::save_partition_vec(const Partition& partition, const CSR& csr) {
-    std::string filename = vizFolder + "/" + getFileName(csr.filename) + "_" 
-                         + partition.getPartitionName() + "_p" 
-                         + std::to_string(partition.nparts) + "_" + partition.postfix + "_map.csv";
+    std::string filename = partition.getVizReportPath();
     
     std::stringstream ss;
     for (int i = 0; i < csr.local_rows; i++) {

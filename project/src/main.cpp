@@ -51,84 +51,80 @@ bool correctInitParams(const int rank, const std::string filename , const int np
     return true;
 }
 
-void start_partitions(const CSR& csr, PartitionMetrics& partitionMetrics, const int nparts, const double imbalance, const bool suppress_output, const bool graph_viz) {
-    Partition partition(nparts, imbalance, suppress_output, csr.local_rows);
-
-    if(graph_viz) {
-        partitionMetrics.save_graph_topology(csr);
+bool partition_exist(const std::string& reportPath, const int rank) {
+    int skip = 0;
+    if (rank == 0) {
+        if (std::filesystem::exists(reportPath)) {
+            skip = 1;
+        }
     }
+    MPI_Bcast(&skip, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    return skip == 1;
+}
+
+void start_partitions(const CSR& csr, Partition& partition, PartitionMetrics& partitionMetrics, const bool graph_viz) {
+    if(graph_viz) {
+        if(!partition_exist(partition.getVizTopologyPath(), csr.rank))
+            partitionMetrics.save_graph_topology(partition, csr);
+        else if (csr.rank == 0)
+            std::cout << "[SKIP] " << partition.getVizTopologyPath() << " already exists\n" << std::endl;
+    }
+
+    auto run_partition_and_save_stats = [&csr, &partition, &partitionMetrics, graph_viz]() {
+        if (!partition_exist(partition.getReportPath(), csr.rank)) {
+            partition.run(csr);
+            partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
+            if (graph_viz) {
+                partitionMetrics.save_partition_vec(partition, csr);
+            }
+            if (csr.rank == 0) {
+                std::cout << std::endl;
+            }
+        }
+        else if (csr.rank == 0) {
+            std::cout << "[SKIP] " << partition.getReportPath() << " already exists\n" << std::endl;
+        }
+    };
 
     /*ParMETIS*/
-    partition.run(Partition::Type::PARMETIS, csr);
-    partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
-    if(graph_viz) {
-        partitionMetrics.save_partition_vec(partition, csr);
-    }
-    if(csr.rank == 0) {
-        std::cout << std::endl;
-    }
+    partition.type = Partition::Type::PARMETIS;
+    run_partition_and_save_stats();
 
     /*PT-SCOTCH*/
+    partition.type = Partition::Type::SCOTCH;
     std::vector<std::string> scotch_strats = {"SCOTCH_STRATQUALITY", "SCOTCH_STRATBALANCE", "SCOTCH_STRATSPEED"};
     for (const auto& strat : scotch_strats) {
         partition.ptscotch_strat_name = strat;
-        partition.run(Partition::Type::SCOTCH, csr);
-        partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
-        if(graph_viz) {
-            partitionMetrics.save_partition_vec(partition, csr);
-        }
-        if (csr.rank == 0) {
-            std::cout << std::endl;
-        }
+        run_partition_and_save_stats();
     }
 
     /*ParHIP*/
+    partition.type = Partition::Type::KAHIP;
     std::vector<std::string> kahip_strats = {"ULTRAFASTMESH", "FASTMESH"};/*{"ULTRAFASTMESH", "FASTMESH", "ECOMESH"}; ECOMESH зависает на маленьких графах */
     for (const auto& strat : kahip_strats) {
         partition.kahip_strat_name = strat;
-        partition.run(Partition::Type::KAHIP, csr);
-        partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
-        if(graph_viz) {
-            partitionMetrics.save_partition_vec(partition, csr);
-        }
-        if (csr.rank == 0) {
-            std::cout << std::endl;
-        }
+        run_partition_and_save_stats();
     }
 
     /*dKaMinPar*/
+    partition.type = Partition::Type::KAMINPAR;
     std::vector<std::string> kaminpar_strats = {"create_default_context", "create_strong_context"};/* {"create_default_context", "create_strong_context", "create_xterapart_context"}; */
     for (const auto& strat : kaminpar_strats) {
         partition.kaminpar_strat_name = strat;
-        partition.run(Partition::Type::KAMINPAR, csr);
-        partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
-        if(graph_viz) {
-            partitionMetrics.save_partition_vec(partition, csr);
-        }
-        if (csr.rank == 0) {
-            std::cout << std::endl;
-        }
+        run_partition_and_save_stats();
     }
 
     /*Zoltan PHG*/
+    partition.type = Partition::Type::ZOLTAN_PHG;
     partition.phg_strat_name = "default";
-    partition.run(Partition::Type::ZOLTAN_PHG, csr);
-    partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
-    if(graph_viz) {
-        partitionMetrics.save_partition_vec(partition, csr);
-    }
-    if (csr.rank == 0) {
-        std::cout << std::endl;
-    }
+    run_partition_and_save_stats();
 
 
     /*Zoltan2 sphynx*/
-    std::vector<std::string> sphynx_types = {"combinatorial", "generalized"};/*{"combinatorial", "generalized", "normalized"};*/
-    std::vector<std::string> sphynx_preconds = {"muelu", "jacobi", "polynomial"};/*{"muelu", "jacobi", "polynomial"};*/
+    partition.type = Partition::Type::ZOLTAN2_SPHYNX;
+    std::vector<std::string> sphynx_types = {"combinatorial", "generalized", "normalized"};/*{"combinatorial", "generalized", "normalized"};*/
+    std::vector<std::string> sphynx_preconds = {"muelu"};/*{"muelu", "jacobi", "polynomial"};*/
     std::vector<int> tolerances = {4, 6, 8}; /*{4, 6, 8};*/
-    std::string sphynx_types_default = "combinatorial";
-    std::string sphynx_preconds_default = "muelu";
-    int tolerances_default = 6;
 
     for(const auto& type : sphynx_types) {
         for(const auto& prec : sphynx_preconds) {
@@ -136,14 +132,7 @@ void start_partitions(const CSR& csr, PartitionMetrics& partitionMetrics, const 
                 partition.sphynx_problem_type = type;
                 partition.sphynx_preconditioner_type = prec;
                 partition.sphynx_tolerance_pow = tol;
-                partition.run(Partition::Type::ZOLTAN2_SPHYNX, csr);
-                partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
-                if(graph_viz) {
-                    partitionMetrics.save_partition_vec(partition, csr);
-                }
-                if (csr.rank == 0) {
-                    std::cout << std::endl;
-                }
+                run_partition_and_save_stats();
             }
         }
     }
@@ -186,8 +175,12 @@ int main(int argc, char* argv[]) {
         CSR csr(rank, size, filename);
         csr.readGraph();
 
-        PartitionMetrics partitionMetrics(outputFolder, vizFolder);
-        start_partitions(csr, partitionMetrics, nparts, imbalance, suppress_output, graph_viz);
+        PartitionMetrics partitionMetrics;
+
+        std::string graphName = std::filesystem::path(filename).stem().string();
+        Partition partition(graphName, outputFolder, vizFolder, nparts, imbalance, suppress_output, csr.local_rows);
+
+        start_partitions(csr, partition, partitionMetrics, graph_viz);
 
     }
     return 0; 
