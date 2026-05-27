@@ -1,5 +1,5 @@
 ======================================================================
- PARTITION REPORT: KaMinPar
+ PARTITION REPORT: dKaMinPar create_default_context
 ======================================================================
 File:             CSR/test
 Seed:             42
@@ -10,9 +10,9 @@ Actual Parts:     4
 Target Imbalance: 5%
 ----------------------------------------------------------------------
 Edge Cut:              18
-Time Total (sec):      0.0405
-Time Solve Only (sec): 0.0348
-Overhead (sec):        0.0057
+Time Total (sec):      0.0434
+Time Solve Only (sec): 0.0352
+Overhead (sec):        0.0082
 ----------------------------------------------------------------------
 Vertices:  avg:     123.50 diff:     6.00 avg_dev:     1.75 std_dev:     2.18
 Edges:     avg:     293.00 diff:    31.00 avg_dev:    10.00 std_dev:    11.94

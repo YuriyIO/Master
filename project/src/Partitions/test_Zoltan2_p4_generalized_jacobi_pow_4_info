@@ -1,5 +1,5 @@
 ======================================================================
- PARTITION REPORT: Zoltan2_Sphynx
+ PARTITION REPORT: Zoltan2 generalized jacobi 4
 ======================================================================
 File:             CSR/test
 Seed:             42
@@ -9,22 +9,22 @@ Target Parts:     4
 Actual Parts:     4
 Target Imbalance: 5%
 ----------------------------------------------------------------------
-Edge Cut:              116
-Time Total (sec):      0.0153
-Time Solve Only (sec): 0.0145
-Overhead (sec):        0.0008
+Edge Cut:              45
+Time Total (sec):      0.0418
+Time Solve Only (sec): 0.0409
+Overhead (sec):        0.0009
 ----------------------------------------------------------------------
 Vertices:  avg:     123.50 diff:     1.00 avg_dev:     0.50 std_dev:     0.50
-Edges:     avg:     293.00 diff:   119.00 avg_dev:    36.50 std_dev:    43.17
-Boundary:  avg:      36.25 diff:    36.00 avg_dev:    12.38 std_dev:    14.62
+Edges:     avg:     293.00 diff:    24.00 avg_dev:     8.50 std_dev:     9.85
+Boundary:  avg:      16.75 diff:    12.00 avg_dev:     4.75 std_dev:     4.97
 Neighbors: avg:       2.50 diff:     1.00 avg_dev:     0.50 std_dev:     0.50
-Comps:     avg:      20.25 diff:    39.00 avg_dev:    12.25 std_dev:    14.86
+Comps:     avg:       3.25 diff:     7.00 avg_dev:     2.38 std_dev:     2.77
 ======================================================================
 
 Part    Vertices  V-Imb %   Edges       E-Imb %   Boundary  Neig    Comps   
 ----------------------------------------------------------------------
-0       124       0.40      305         4.10      26        3       11      
-1       123       -0.40     354         20.82     33        2       5       
-2       124       0.40      278         -5.12     25        2       21      
-3       123       -0.40     235         -19.80    61        3       44      
+0       124       0.40      288         -1.71     10        3       2       
+1       123       -0.40     288         -1.71     21        2       8       
+2       124       0.40      310         5.80      14        2       1       
+3       123       -0.40     286         -2.39     22        3       2       
 ======================================================================

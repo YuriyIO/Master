@@ -14,8 +14,8 @@ awk '
 /^%/ { print; next } 
 NF == 2 { print $1, $2, "1.0"; next } 
 { print }
-' /home_edu/edu-cmc-sqi23/edu-cmc-sqi23-25/programs/project/Matrix/hugetric-00000.mtx > /home_edu/edu-cmc-sqi23/edu-cmc-sqi23-25/programs/project/Matrix/hugetric-00000_weighted
+' /home_edu/edu-cmc-sqi23/edu-cmc-sqi23-25/programs/project/Matrix/hugetric_00000.mtx > /home_edu/edu-cmc-sqi23/edu-cmc-sqi23-25/programs/project/Matrix/hugetric_00000_weighted.mtx
 
-./mtx2csr /home_edu/edu-cmc-sqi23/edu-cmc-sqi23-25/programs/project/Matrix/hugetric-00000_weighted.mtx  /home_edu/edu-cmc-sqi23/edu-cmc-sqi23-25/programs/project/src/CSR/hugetric-00000_weighted
+./mtx2csr /home_edu/edu-cmc-sqi23/edu-cmc-sqi23-25/programs/project/Matrix/hugetric_00000_weighted.mtx  /home_edu/edu-cmc-sqi23/edu-cmc-sqi23-25/programs/project/src/CSR/hugetric_00000_weighted
 
 

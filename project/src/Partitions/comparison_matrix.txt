@@ -1,0 +1,245 @@
+==================== Edge Cut ====================
+ParHIP FASTMESH                                   : 20
+ParHIP ULTRAFASTMESH                              : 20
+
+dKaMinPar create_default_context                  : 18
+dKaMinPar create_strong_context                   : 18
+
+ParMETIS                                          : 20
+
+PT-SCOTCH SCOTCH_STRATBALANCE                     : 19
+PT-SCOTCH SCOTCH_STRATQUALITY                     : 19
+PT-SCOTCH SCOTCH_STRATSPEED                       : 19
+
+Zoltan                                            : 25
+
+Zoltan2 combinatorial jacobi 4                    : 42
+Zoltan2 combinatorial jacobi 6                    : 42
+Zoltan2 combinatorial jacobi 8                    : 42
+Zoltan2 combinatorial muelu 4                     : 42
+Zoltan2 combinatorial muelu 6                     : 42
+Zoltan2 combinatorial muelu 8                     : 42
+Zoltan2 combinatorial polynomial 4                : 42
+Zoltan2 combinatorial polynomial 6                : 42
+Zoltan2 combinatorial polynomial 8                : 42
+Zoltan2 generalized jacobi 4                      : 45
+Zoltan2 generalized jacobi 6                      : 45
+Zoltan2 generalized jacobi 8                      : 45
+Zoltan2 generalized muelu 4                       : 45
+Zoltan2 generalized muelu 6                       : 45
+Zoltan2 generalized muelu 8                       : 45
+Zoltan2 generalized polynomial 4                  : 45
+Zoltan2 generalized polynomial 6                  : 45
+Zoltan2 generalized polynomial 8                  : 45
+
+
+==================== Boundary ====================
+ParHIP FASTMESH                                   : avg: 9.00  diff: 8.00  avg_dev: 2.50  std_dev: 3.08
+ParHIP ULTRAFASTMESH                              : avg: 9.00  diff: 6.00  avg_dev: 2.00  std_dev: 2.45
+
+dKaMinPar create_default_context                  : avg: 8.25  diff: 9.00  avg_dev: 2.62  std_dev: 3.27
+dKaMinPar create_strong_context                   : avg: 8.25  diff: 9.00  avg_dev: 2.62  std_dev: 3.27
+
+ParMETIS                                          : avg: 9.00  diff: 6.00  avg_dev: 2.00  std_dev: 2.35
+
+PT-SCOTCH SCOTCH_STRATBALANCE                     : avg: 8.25  diff: 6.00  avg_dev: 1.88  std_dev: 2.28
+PT-SCOTCH SCOTCH_STRATQUALITY                     : avg: 8.25  diff: 6.00  avg_dev: 1.88  std_dev: 2.28
+PT-SCOTCH SCOTCH_STRATSPEED                       : avg: 8.25  diff: 6.00  avg_dev: 1.88  std_dev: 2.28
+
+Zoltan                                            : avg: 10.50  diff: 4.00  avg_dev: 1.50  std_dev: 1.66
+
+Zoltan2 combinatorial jacobi 4                    : avg: 17.25  diff: 13.00  avg_dev: 4.25  std_dev: 4.97
+Zoltan2 combinatorial jacobi 6                    : avg: 17.25  diff: 12.00  avg_dev: 4.25  std_dev: 4.66
+Zoltan2 combinatorial jacobi 8                    : avg: 17.25  diff: 12.00  avg_dev: 4.25  std_dev: 4.66
+Zoltan2 combinatorial muelu 4                     : avg: 17.25  diff: 13.00  avg_dev: 4.25  std_dev: 4.97
+Zoltan2 combinatorial muelu 6                     : avg: 17.25  diff: 13.00  avg_dev: 4.25  std_dev: 4.97
+Zoltan2 combinatorial muelu 8                     : avg: 17.25  diff: 13.00  avg_dev: 4.25  std_dev: 4.97
+Zoltan2 combinatorial polynomial 4                : avg: 17.25  diff: 13.00  avg_dev: 4.25  std_dev: 4.97
+Zoltan2 combinatorial polynomial 6                : avg: 17.25  diff: 13.00  avg_dev: 4.25  std_dev: 4.97
+Zoltan2 combinatorial polynomial 8                : avg: 17.25  diff: 13.00  avg_dev: 4.25  std_dev: 4.97
+Zoltan2 generalized jacobi 4                      : avg: 16.75  diff: 12.00  avg_dev: 4.75  std_dev: 4.97
+Zoltan2 generalized jacobi 6                      : avg: 17.00  diff: 14.00  avg_dev: 5.50  std_dev: 5.79
+Zoltan2 generalized jacobi 8                      : avg: 16.75  diff: 12.00  avg_dev: 4.75  std_dev: 4.97
+Zoltan2 generalized muelu 4                       : avg: 16.75  diff: 12.00  avg_dev: 4.75  std_dev: 4.97
+Zoltan2 generalized muelu 6                       : avg: 16.75  diff: 12.00  avg_dev: 4.75  std_dev: 4.97
+Zoltan2 generalized muelu 8                       : avg: 17.00  diff: 14.00  avg_dev: 5.50  std_dev: 5.79
+Zoltan2 generalized polynomial 4                  : avg: 16.75  diff: 12.00  avg_dev: 4.75  std_dev: 4.97
+Zoltan2 generalized polynomial 6                  : avg: 17.00  diff: 14.00  avg_dev: 5.50  std_dev: 5.79
+Zoltan2 generalized polynomial 8                  : avg: 16.75  diff: 12.00  avg_dev: 4.75  std_dev: 4.97
+
+
+==================== Neighbors ====================
+ParHIP FASTMESH                                   : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+ParHIP ULTRAFASTMESH                              : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+
+dKaMinPar create_default_context                  : avg: 2.00  diff: 2.00  avg_dev: 0.50  std_dev: 0.71
+dKaMinPar create_strong_context                   : avg: 2.00  diff: 2.00  avg_dev: 0.50  std_dev: 0.71
+
+ParMETIS                                          : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+
+PT-SCOTCH SCOTCH_STRATBALANCE                     : avg: 3.00  diff: 0.00  avg_dev: 0.00  std_dev: 0.00
+PT-SCOTCH SCOTCH_STRATQUALITY                     : avg: 3.00  diff: 0.00  avg_dev: 0.00  std_dev: 0.00
+PT-SCOTCH SCOTCH_STRATSPEED                       : avg: 3.00  diff: 0.00  avg_dev: 0.00  std_dev: 0.00
+
+Zoltan                                            : avg: 3.00  diff: 0.00  avg_dev: 0.00  std_dev: 0.00
+
+Zoltan2 combinatorial jacobi 4                    : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 combinatorial jacobi 6                    : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 combinatorial jacobi 8                    : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 combinatorial muelu 4                     : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 combinatorial muelu 6                     : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 combinatorial muelu 8                     : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 combinatorial polynomial 4                : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 combinatorial polynomial 6                : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 combinatorial polynomial 8                : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 generalized jacobi 4                      : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 generalized jacobi 6                      : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 generalized jacobi 8                      : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 generalized muelu 4                       : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 generalized muelu 6                       : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 generalized muelu 8                       : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 generalized polynomial 4                  : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 generalized polynomial 6                  : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 generalized polynomial 8                  : avg: 2.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+
+
+==================== Comps ====================
+ParHIP FASTMESH                                   : avg: 1.00  diff: 0.00  avg_dev: 0.00  std_dev: 0.00
+ParHIP ULTRAFASTMESH                              : avg: 1.25  diff: 1.00  avg_dev: 0.38  std_dev: 0.43
+
+dKaMinPar create_default_context                  : avg: 1.00  diff: 0.00  avg_dev: 0.00  std_dev: 0.00
+dKaMinPar create_strong_context                   : avg: 1.00  diff: 0.00  avg_dev: 0.00  std_dev: 0.00
+
+ParMETIS                                          : avg: 1.25  diff: 1.00  avg_dev: 0.38  std_dev: 0.43
+
+PT-SCOTCH SCOTCH_STRATBALANCE                     : avg: 1.25  diff: 1.00  avg_dev: 0.38  std_dev: 0.43
+PT-SCOTCH SCOTCH_STRATQUALITY                     : avg: 1.25  diff: 1.00  avg_dev: 0.38  std_dev: 0.43
+PT-SCOTCH SCOTCH_STRATSPEED                       : avg: 1.25  diff: 1.00  avg_dev: 0.38  std_dev: 0.43
+
+Zoltan                                            : avg: 1.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+
+Zoltan2 combinatorial jacobi 4                    : avg: 2.25  diff: 3.00  avg_dev: 1.25  std_dev: 1.30
+Zoltan2 combinatorial jacobi 6                    : avg: 2.25  diff: 4.00  avg_dev: 1.38  std_dev: 1.64
+Zoltan2 combinatorial jacobi 8                    : avg: 2.25  diff: 4.00  avg_dev: 1.38  std_dev: 1.64
+Zoltan2 combinatorial muelu 4                     : avg: 2.25  diff: 3.00  avg_dev: 1.25  std_dev: 1.30
+Zoltan2 combinatorial muelu 6                     : avg: 2.25  diff: 3.00  avg_dev: 1.25  std_dev: 1.30
+Zoltan2 combinatorial muelu 8                     : avg: 2.25  diff: 3.00  avg_dev: 1.25  std_dev: 1.30
+Zoltan2 combinatorial polynomial 4                : avg: 2.25  diff: 3.00  avg_dev: 1.25  std_dev: 1.30
+Zoltan2 combinatorial polynomial 6                : avg: 2.25  diff: 3.00  avg_dev: 1.25  std_dev: 1.30
+Zoltan2 combinatorial polynomial 8                : avg: 2.25  diff: 3.00  avg_dev: 1.25  std_dev: 1.30
+Zoltan2 generalized jacobi 4                      : avg: 3.25  diff: 7.00  avg_dev: 2.38  std_dev: 2.77
+Zoltan2 generalized jacobi 6                      : avg: 3.25  diff: 8.00  avg_dev: 2.88  std_dev: 3.34
+Zoltan2 generalized jacobi 8                      : avg: 3.25  diff: 7.00  avg_dev: 2.38  std_dev: 2.77
+Zoltan2 generalized muelu 4                       : avg: 3.25  diff: 7.00  avg_dev: 2.38  std_dev: 2.77
+Zoltan2 generalized muelu 6                       : avg: 3.25  diff: 7.00  avg_dev: 2.38  std_dev: 2.77
+Zoltan2 generalized muelu 8                       : avg: 3.25  diff: 8.00  avg_dev: 2.88  std_dev: 3.34
+Zoltan2 generalized polynomial 4                  : avg: 3.25  diff: 7.00  avg_dev: 2.38  std_dev: 2.77
+Zoltan2 generalized polynomial 6                  : avg: 3.25  diff: 8.00  avg_dev: 2.88  std_dev: 3.34
+Zoltan2 generalized polynomial 8                  : avg: 3.25  diff: 7.00  avg_dev: 2.38  std_dev: 2.77
+
+
+==================== Vertices ====================
+ParHIP FASTMESH                                   : avg: 123.50  diff: 11.00  avg_dev: 3.75  std_dev: 4.50
+ParHIP ULTRAFASTMESH                              : avg: 123.50  diff: 13.00  avg_dev: 4.00  std_dev: 4.82
+
+dKaMinPar create_default_context                  : avg: 123.50  diff: 6.00  avg_dev: 1.75  std_dev: 2.18
+dKaMinPar create_strong_context                   : avg: 123.50  diff: 6.00  avg_dev: 2.50  std_dev: 2.60
+
+ParMETIS                                          : avg: 123.50  diff: 2.00  avg_dev: 0.75  std_dev: 0.87
+
+PT-SCOTCH SCOTCH_STRATBALANCE                     : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+PT-SCOTCH SCOTCH_STRATQUALITY                     : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+PT-SCOTCH SCOTCH_STRATSPEED                       : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+
+Zoltan                                            : avg: 123.50  diff: 2.00  avg_dev: 0.75  std_dev: 0.87
+
+Zoltan2 combinatorial jacobi 4                    : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 combinatorial jacobi 6                    : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 combinatorial jacobi 8                    : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 combinatorial muelu 4                     : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 combinatorial muelu 6                     : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 combinatorial muelu 8                     : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 combinatorial polynomial 4                : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 combinatorial polynomial 6                : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 combinatorial polynomial 8                : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 generalized jacobi 4                      : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 generalized jacobi 6                      : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 generalized jacobi 8                      : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 generalized muelu 4                       : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 generalized muelu 6                       : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 generalized muelu 8                       : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 generalized polynomial 4                  : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 generalized polynomial 6                  : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+Zoltan2 generalized polynomial 8                  : avg: 123.50  diff: 1.00  avg_dev: 0.50  std_dev: 0.50
+
+
+==================== Edges ====================
+ParHIP FASTMESH                                   : avg: 293.00  diff: 52.00  avg_dev: 14.50  std_dev: 18.63
+ParHIP ULTRAFASTMESH                              : avg: 293.00  diff: 51.00  avg_dev: 15.50  std_dev: 18.77
+
+dKaMinPar create_default_context                  : avg: 293.00  diff: 31.00  avg_dev: 10.00  std_dev: 11.94
+dKaMinPar create_strong_context                   : avg: 293.00  diff: 35.00  avg_dev: 12.00  std_dev: 14.30
+
+ParMETIS                                          : avg: 293.00  diff: 33.00  avg_dev: 10.50  std_dev: 12.90
+
+PT-SCOTCH SCOTCH_STRATBALANCE                     : avg: 293.00  diff: 32.00  avg_dev: 9.50  std_dev: 11.51
+PT-SCOTCH SCOTCH_STRATQUALITY                     : avg: 293.00  diff: 32.00  avg_dev: 9.50  std_dev: 11.51
+PT-SCOTCH SCOTCH_STRATSPEED                       : avg: 293.00  diff: 32.00  avg_dev: 9.50  std_dev: 11.51
+
+Zoltan                                            : avg: 293.00  diff: 28.00  avg_dev: 10.00  std_dev: 11.60
+
+Zoltan2 combinatorial jacobi 4                    : avg: 293.00  diff: 28.00  avg_dev: 8.00  std_dev: 10.12
+Zoltan2 combinatorial jacobi 6                    : avg: 293.00  diff: 30.00  avg_dev: 9.50  std_dev: 11.16
+Zoltan2 combinatorial jacobi 8                    : avg: 293.00  diff: 30.00  avg_dev: 9.50  std_dev: 11.16
+Zoltan2 combinatorial muelu 4                     : avg: 293.00  diff: 28.00  avg_dev: 8.00  std_dev: 10.12
+Zoltan2 combinatorial muelu 6                     : avg: 293.00  diff: 28.00  avg_dev: 8.00  std_dev: 10.12
+Zoltan2 combinatorial muelu 8                     : avg: 293.00  diff: 28.00  avg_dev: 8.00  std_dev: 10.12
+Zoltan2 combinatorial polynomial 4                : avg: 293.00  diff: 28.00  avg_dev: 8.00  std_dev: 10.12
+Zoltan2 combinatorial polynomial 6                : avg: 293.00  diff: 28.00  avg_dev: 8.00  std_dev: 10.12
+Zoltan2 combinatorial polynomial 8                : avg: 293.00  diff: 28.00  avg_dev: 8.00  std_dev: 10.12
+Zoltan2 generalized jacobi 4                      : avg: 293.00  diff: 24.00  avg_dev: 8.50  std_dev: 9.85
+Zoltan2 generalized jacobi 6                      : avg: 293.00  diff: 21.00  avg_dev: 7.50  std_dev: 8.69
+Zoltan2 generalized jacobi 8                      : avg: 293.00  diff: 24.00  avg_dev: 8.50  std_dev: 9.85
+Zoltan2 generalized muelu 4                       : avg: 293.00  diff: 24.00  avg_dev: 8.50  std_dev: 9.85
+Zoltan2 generalized muelu 6                       : avg: 293.00  diff: 24.00  avg_dev: 8.50  std_dev: 9.85
+Zoltan2 generalized muelu 8                       : avg: 293.00  diff: 21.00  avg_dev: 7.50  std_dev: 8.69
+Zoltan2 generalized polynomial 4                  : avg: 293.00  diff: 24.00  avg_dev: 8.50  std_dev: 9.85
+Zoltan2 generalized polynomial 6                  : avg: 293.00  diff: 21.00  avg_dev: 7.50  std_dev: 8.69
+Zoltan2 generalized polynomial 8                  : avg: 293.00  diff: 24.00  avg_dev: 8.50  std_dev: 9.85
+
+
+==================== Time: Total, Solve Only (sec) ====================
+ParHIP FASTMESH                                   : 0.0077, 0.0077
+ParHIP ULTRAFASTMESH                              : 0.0263, 0.0263
+
+dKaMinPar create_default_context                  : 0.0434, 0.0352
+dKaMinPar create_strong_context                   : 0.0136, 0.0133
+
+ParMETIS                                          : 0.0055, 0.0055
+
+PT-SCOTCH SCOTCH_STRATBALANCE                     : 0.0325, 0.0322
+PT-SCOTCH SCOTCH_STRATQUALITY                     : 0.0297, 0.0269
+PT-SCOTCH SCOTCH_STRATSPEED                       : 0.0176, 0.0174
+
+Zoltan                                            : 0.0430, 0.0071
+
+Zoltan2 combinatorial jacobi 4                    : 0.0332, 0.0324
+Zoltan2 combinatorial jacobi 6                    : 0.0520, 0.0513
+Zoltan2 combinatorial jacobi 8                    : 0.0987, 0.0978
+Zoltan2 combinatorial muelu 4                     : 0.0716, 0.0704
+Zoltan2 combinatorial muelu 6                     : 0.0125, 0.0119
+Zoltan2 combinatorial muelu 8                     : 0.0170, 0.0161
+Zoltan2 combinatorial polynomial 4                : 0.0199, 0.0192
+Zoltan2 combinatorial polynomial 6                : 0.0156, 0.0148
+Zoltan2 combinatorial polynomial 8                : 0.0245, 0.0237
+Zoltan2 generalized jacobi 4                      : 0.0418, 0.0409
+Zoltan2 generalized jacobi 6                      : 0.0552, 0.0544
+Zoltan2 generalized jacobi 8                      : 0.0730, 0.0723
+Zoltan2 generalized muelu 4                       : 0.0147, 0.0140
+Zoltan2 generalized muelu 6                       : 0.0109, 0.0103
+Zoltan2 generalized muelu 8                       : 0.0127, 0.0120
+Zoltan2 generalized polynomial 4                  : 0.0150, 0.0143
+Zoltan2 generalized polynomial 6                  : 0.0157, 0.0151
+Zoltan2 generalized polynomial 8                  : 0.0253, 0.0245
+
+

@@ -58,6 +58,7 @@ void start_partitions(const CSR& csr, PartitionMetrics& partitionMetrics, const 
         partitionMetrics.save_graph_topology(csr);
     }
 
+    /*ParMETIS*/
     partition.run(Partition::Type::PARMETIS, csr);
     partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
     if(graph_viz) {
@@ -67,6 +68,7 @@ void start_partitions(const CSR& csr, PartitionMetrics& partitionMetrics, const 
         std::cout << std::endl;
     }
 
+    /*PT-SCOTCH*/
     std::vector<std::string> scotch_strats = {"SCOTCH_STRATQUALITY", "SCOTCH_STRATBALANCE", "SCOTCH_STRATSPEED"};
     for (const auto& strat : scotch_strats) {
         partition.ptscotch_strat_name = strat;
@@ -80,6 +82,7 @@ void start_partitions(const CSR& csr, PartitionMetrics& partitionMetrics, const 
         }
     }
 
+    /*ParHIP*/
     std::vector<std::string> kahip_strats = {"ULTRAFASTMESH", "FASTMESH"};/*{"ULTRAFASTMESH", "FASTMESH", "ECOMESH"}; ECOMESH зависает на маленьких графах */
     for (const auto& strat : kahip_strats) {
         partition.kahip_strat_name = strat;
@@ -93,6 +96,7 @@ void start_partitions(const CSR& csr, PartitionMetrics& partitionMetrics, const 
         }
     }
 
+    /*dKaMinPar*/
     std::vector<std::string> kaminpar_strats = {"create_default_context", "create_strong_context"};/* {"create_default_context", "create_strong_context", "create_xterapart_context"}; */
     for (const auto& strat : kaminpar_strats) {
         partition.kaminpar_strat_name = strat;
@@ -106,6 +110,7 @@ void start_partitions(const CSR& csr, PartitionMetrics& partitionMetrics, const 
         }
     }
 
+    /*Zoltan PHG*/
     partition.phg_strat_name = "default";
     partition.run(Partition::Type::ZOLTAN_PHG, csr);
     partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
@@ -117,6 +122,7 @@ void start_partitions(const CSR& csr, PartitionMetrics& partitionMetrics, const 
     }
 
 
+    /*Zoltan2 sphynx*/
     std::vector<std::string> sphynx_types = {"combinatorial", "generalized"};/*{"combinatorial", "generalized", "normalized"};*/
     std::vector<std::string> sphynx_preconds = {"muelu", "jacobi", "polynomial"};/*{"muelu", "jacobi", "polynomial"};*/
     std::vector<int> tolerances = {4, 6, 8}; /*{4, 6, 8};*/
@@ -124,38 +130,21 @@ void start_partitions(const CSR& csr, PartitionMetrics& partitionMetrics, const 
     std::string sphynx_preconds_default = "muelu";
     int tolerances_default = 6;
 
-    partition.sphynx_tolerance_pow = tolerances_default;
-    for (const auto& type : sphynx_types) {
-        for (const auto& prec : sphynx_preconds) {
-            partition.sphynx_problem_type = type;
-            partition.sphynx_preconditioner_type = prec;
-            partition.run(Partition::Type::ZOLTAN2_SPHYNX, csr);
-            partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
-            if(graph_viz) {
-                partitionMetrics.save_partition_vec(partition, csr);
+    for(const auto& type : sphynx_types) {
+        for(const auto& prec : sphynx_preconds) {
+            for(int tol : tolerances) {
+                partition.sphynx_problem_type = type;
+                partition.sphynx_preconditioner_type = prec;
+                partition.sphynx_tolerance_pow = tol;
+                partition.run(Partition::Type::ZOLTAN2_SPHYNX, csr);
+                partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
+                if(graph_viz) {
+                    partitionMetrics.save_partition_vec(partition, csr);
+                }
+                if (csr.rank == 0) {
+                    std::cout << std::endl;
+                }
             }
-            if (csr.rank == 0) {
-                std::cout << std::endl;
-            }
-
-        }
-
-    }
-
-    partition.sphynx_problem_type = sphynx_types_default;
-    partition.sphynx_preconditioner_type = sphynx_preconds_default;
-    for (int tol : tolerances) {
-        if(tol == tolerances_default)
-            continue;
-        partition.sphynx_tolerance_pow = tol;
-
-        partition.run(Partition::Type::ZOLTAN2_SPHYNX, csr);
-        partitionMetrics.save_partition_info(partition, partition.actualParts, csr);
-        if(graph_viz) {
-            partitionMetrics.save_partition_vec(partition, csr);
-        }
-        if (csr.rank == 0) {
-            std::cout << std::endl;
         }
     }
 

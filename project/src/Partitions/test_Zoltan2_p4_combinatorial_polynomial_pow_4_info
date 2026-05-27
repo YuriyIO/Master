@@ -1,5 +1,5 @@
 ======================================================================
- PARTITION REPORT: Zoltan2_Sphynx
+ PARTITION REPORT: Zoltan2 combinatorial polynomial 4
 ======================================================================
 File:             CSR/test
 Seed:             42
@@ -9,22 +9,22 @@ Target Parts:     4
 Actual Parts:     4
 Target Imbalance: 5%
 ----------------------------------------------------------------------
-Edge Cut:              45
-Time Total (sec):      0.0195
-Time Solve Only (sec): 0.0190
-Overhead (sec):        0.0005
+Edge Cut:              42
+Time Total (sec):      0.0199
+Time Solve Only (sec): 0.0192
+Overhead (sec):        0.0007
 ----------------------------------------------------------------------
 Vertices:  avg:     123.50 diff:     1.00 avg_dev:     0.50 std_dev:     0.50
-Edges:     avg:     293.00 diff:    24.00 avg_dev:     8.50 std_dev:     9.85
-Boundary:  avg:      16.75 diff:    12.00 avg_dev:     4.75 std_dev:     4.97
+Edges:     avg:     293.00 diff:    28.00 avg_dev:     8.00 std_dev:    10.12
+Boundary:  avg:      17.25 diff:    13.00 avg_dev:     4.25 std_dev:     4.97
 Neighbors: avg:       2.50 diff:     1.00 avg_dev:     0.50 std_dev:     0.50
-Comps:     avg:       3.25 diff:     7.00 avg_dev:     2.38 std_dev:     2.77
+Comps:     avg:       2.25 diff:     3.00 avg_dev:     1.25 std_dev:     1.30
 ======================================================================
 
 Part    Vertices  V-Imb %   Edges       E-Imb %   Boundary  Neig    Comps   
 ----------------------------------------------------------------------
-0       124       0.40      310         5.80      14        2       1       
-1       123       -0.40     286         -2.39     22        3       2       
-2       124       0.40      288         -1.71     10        3       2       
-3       123       -0.40     288         -1.71     21        2       8       
+0       124       0.40      292         -0.34     18        2       4       
+1       123       -0.40     290         -1.02     12        3       1       
+2       124       0.40      281         -4.10     25        3       3       
+3       123       -0.40     309         5.46      14        2       1       
 ======================================================================

@@ -10,8 +10,8 @@ Actual Parts:     4
 Target Imbalance: 5%
 ----------------------------------------------------------------------
 Edge Cut:              20
-Time Total (sec):      0.0048
-Time Solve Only (sec): 0.0048
+Time Total (sec):      0.0055
+Time Solve Only (sec): 0.0055
 Overhead (sec):        0.0000
 ----------------------------------------------------------------------
 Vertices:  avg:     123.50 diff:     2.00 avg_dev:     0.75 std_dev:     0.87

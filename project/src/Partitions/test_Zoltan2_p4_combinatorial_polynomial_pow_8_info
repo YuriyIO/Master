@@ -1,5 +1,5 @@
 ======================================================================
- PARTITION REPORT: Zoltan2_Sphynx
+ PARTITION REPORT: Zoltan2 combinatorial polynomial 8
 ======================================================================
 File:             CSR/test
 Seed:             42
@@ -10,9 +10,9 @@ Actual Parts:     4
 Target Imbalance: 5%
 ----------------------------------------------------------------------
 Edge Cut:              42
-Time Total (sec):      0.0147
-Time Solve Only (sec): 0.0140
-Overhead (sec):        0.0007
+Time Total (sec):      0.0245
+Time Solve Only (sec): 0.0237
+Overhead (sec):        0.0008
 ----------------------------------------------------------------------
 Vertices:  avg:     123.50 diff:     1.00 avg_dev:     0.50 std_dev:     0.50
 Edges:     avg:     293.00 diff:    28.00 avg_dev:     8.00 std_dev:    10.12

@@ -1,5 +1,5 @@
 ======================================================================
- PARTITION REPORT: KaHIP
+ PARTITION REPORT: ParHIP ULTRAFASTMESH
 ======================================================================
 File:             CSR/test
 Seed:             42
@@ -10,8 +10,8 @@ Actual Parts:     4
 Target Imbalance: 5%
 ----------------------------------------------------------------------
 Edge Cut:              20
-Time Total (sec):      0.0156
-Time Solve Only (sec): 0.0155
+Time Total (sec):      0.0263
+Time Solve Only (sec): 0.0263
 Overhead (sec):        0.0000
 ----------------------------------------------------------------------
 Vertices:  avg:     123.50 diff:    13.00 avg_dev:     4.00 std_dev:     4.82

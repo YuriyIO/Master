@@ -1,5 +1,5 @@
 ======================================================================
- PARTITION REPORT: SCOTCH
+ PARTITION REPORT: PT-SCOTCH SCOTCH_STRATQUALITY
 ======================================================================
 File:             CSR/test
 Seed:             42
@@ -10,9 +10,9 @@ Actual Parts:     4
 Target Imbalance: 5%
 ----------------------------------------------------------------------
 Edge Cut:              19
-Time Total (sec):      0.0342
-Time Solve Only (sec): 0.0309
-Overhead (sec):        0.0034
+Time Total (sec):      0.0297
+Time Solve Only (sec): 0.0269
+Overhead (sec):        0.0028
 ----------------------------------------------------------------------
 Vertices:  avg:     123.50 diff:     1.00 avg_dev:     0.50 std_dev:     0.50
 Edges:     avg:     293.00 diff:    32.00 avg_dev:     9.50 std_dev:    11.51
